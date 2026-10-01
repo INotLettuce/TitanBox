@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link rel="icon" type="image/x-icon" href="./favicon.ico" />
+    <link rel="icon" type="image/svg+xml" href="./titanbox-mark.svg" />
     <!-- CDN for jQuery and select2 -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"
             integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
@@ -10,21 +10,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>JukeBox</title>
-    <meta name="application-name" content="JukeBox" />
-    <meta name="apple-mobile-web-app-title" content="JukeBox">
-    <meta name="description" content="JukeBox is a mod of Slarmoo's Box that aims to add a crap ton of presets." />
-    <meta name="keywords" content="chiptune, instrumental, music, song, melody, composition, tool, free, online, square wave, NES, NSF, jukebox, ultrabox, beepbox, jummbox, pandorasbox, modbox, sandbox, goldbox, wackybox, todbox, slarmoo's box" />
+    <title>TitanBox</title>
+    <meta name="application-name" content="TitanBox" />
+    <meta name="apple-mobile-web-app-title" content="TitanBox">
+    <meta name="description" content="TitanBox is a BeepBox-family music editor with expanded synthesis and composition features." />
+    <meta name="keywords" content="TitanBox, chiptune, instrumental, music, song, melody, composition, tool, free, online, square wave, NES, NSF, ultrabox, beepbox, jummbox, pandorasbox, modbox, sandbox, goldbox, wackybox, todbox, slarmoo's box" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="theme-color" content="#ad7760" />
-    <meta name="msapplication-TileColor" content="#ad7760" />
+    <meta name="theme-color" content="#16191c" />
+    <meta name="msapplication-TileColor" content="#16191c" />
     <meta name="msapplication-config" content="/browserconfig.xml" />
     <meta name="format-detection" content="telephone=no" />
-    <meta property="og:image" content="https://jukeebox.github.io/icon_shadow_192.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png" />
-    <link rel="icon" type="image/png" sizes="32x32" href="./icon_32.png" />
+    <meta property="og:image" content="./titanbox-mark.svg" />
+    <link rel="apple-touch-icon" href="./titanbox-mark.svg" />
     <link rel="manifest" href="./manifest.webmanifest" />
     <link href="https://fonts.googleapis.com/css?family=B612" rel="stylesheet" media="none" onload="if (this.media != 'all') this.media='all';" /> <!-- this is a trick to load CSS asynchronously. -->
     <style type="text/css">
@@ -75,6 +74,19 @@
             margin-bottom: 0.5em;
             -webkit-text-stroke-width: 0;
             color: var(--mod-title, #8C5D49);
+        }
+
+        .title-lockup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45em;
+        }
+
+        .title-mark {
+            width: 1.1em;
+            height: 1.1em;
+            flex: 0 0 auto;
         }
 
         h2 {
@@ -175,22 +187,26 @@
     </script>
     <div id="beepboxEditorContainer">
         <noscript>
-            Sorry, JukeBox requires a JavaScript-enabled browser.
+            Sorry, TitanBox requires a JavaScript-enabled browser.
         </noscript>
     </div>
     <div id="text-content">
         <section>
 
-            <h1>
-                <font>JukeBox</font>
+            <h1 class="title-lockup">
+                <svg class="title-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                    <rect x="2" y="2" width="28" height="6" rx="1" fill="#708090" />
+                    <rect x="12" y="10" width="8" height="4" fill="#00f0ff" />
+                    <rect x="10" y="16" width="12" height="4" fill="#708090" />
+                    <rect x="14" y="22" width="4" height="8" fill="#00f0ff" />
+                </svg>
+                <font>TitanBox</font>
                 <span id="goldboxPlant" style="display: inline; color:#62a13b"></span>
                 <!-- <span id="goldboxPlant" style="display: inline; color: var(--plant-color, var(--link-accent, #62a13b));"></span> -->
             </h1>
             
             <p id="introduction">
-                JukeBox is a mod of Slarmoo's Box that aims to add a crap ton of presets. <br>
-                (see <a onclick="window.open('./manual/credits.html')">credits</a>).
-            </p>
+                TitanBox is an expanded BeepBox-family music editor, bringing together features from across the mod community. <br>
             <!-- <p>
                 All song data is contained in the URL at the top of your browser.
                 When you make changes to the song, the URL is updated to reflect your changes.
@@ -205,7 +221,7 @@
             <input type="submit" name="submit" value="Paypal"/>
         </form>
         <br><br>
-        Additionally, Slarmoo's Box, which is the basis of JukeBox, takes a lot of time to make and update. If you have found it valuable and are able to do so, please consider donating to Slarmoo here: 
+        Additionally, TitanBox builds on Slarmoo's Box, which takes a lot of time to make and update. If you have found it valuable and are able to do so, please consider donating to Slarmoo here: 
         <form action="https://www.paypal.com/donate/?hosted_button_id=BMLD7HPKFR6NG" method="post" target="_blank">
             <input type="submit" name="submit" value="Paypal" />
         </form>
@@ -215,16 +231,16 @@
                         About
                     </h2>
                     <p>
-                        JukeBox, developed by CoolTasDude, is a mod of Slarmoo's Box which is a mod of UltraBox which ported features from Pandora's Box into GoldBox which are both mods of JummBox which is a mod of BeepBox.
+                        TitanBox is developed by InotLettuce and builds on work by CoolTasDude, Slarmoo's Box, UltraBox, Pandora's Box, GoldBox, JummBox, and BeepBox.
                     </p>
                     <p>
-                        JukeBox does not claim ownership over songs created with it, so original songs belong to their authors.
+                        TitanBox does not claim ownership over songs created with it, so original songs belong to their authors.
                     </p>
                     <p>
-                        Neither JukeBox nor its creators assume responsibility for any copyrighted material played on JukeBox. No songs are ever received, recorded, or distributed by JukeBox's servers. All song data is contained in the URL after the hash (#) mark, and JukeBox running inside your browser converts that data into sound waves.
+                        Neither TitanBox nor its creator assume responsibility for any copyrighted material played on TitanBox. No songs are ever received, recorded, or distributed by TitanBox's servers. All song data is contained in the URL after the hash (#) mark, and TitanBox running inside your browser converts that data into sound waves.
                     </p>
                     <p>
-                        JukeBox does not collect, track, or share any user data.
+                        TitanBox does not collect, track, or share any user data.
                     </p>
                 </section>
                 <section>
@@ -343,7 +359,7 @@
                         <ul>
                             BeepBox, JummBox, UltraBox, SlarmoosBox, AbyssBox, SandBox, MidBox, AwesomeBox, BulbBox, Unbox, JukeBox, 41Box
                         </ul>
-                        <h3>JukeBox Version Tags:</h3>
+                        <h3>TitanBox Version Tags:</h3>
                         <ul>
                             pre1.0.0, 1.0.0
                         </ul>
@@ -370,8 +386,8 @@
                                     </p>
                             </details>
                             <details>
-                                <summary>How to submit my instruments to jukebox?</summary>
-                                    <p>The button is like, right down there. "JukeBox Preset Submission Form"</p>
+                                <summary>How to submit my instruments to TitanBox?</summary>
+                                    <p>The button is like, right down there. "TitanBox Preset Submission Form"</p>
                             </details>
                     </details>
                 </section>
@@ -380,28 +396,28 @@
             <div style="justify-content: center; display: flex; cursor: pointer;">
                 <div onclick="window.open('./manual/introduction.html')" style="height: 80px; background: black; width: 430px; border-radius: 20px; border: solid 1px #444; display: flex; flex-direction: row; align-items: center;">
                     <div style="height: 100%;width: 80px;border-right: 1px solid #444;/*! border-radius: 10px; */background-image: url(./image_assets/manual_brown.png);background-size: 90%;background-repeat: no-repeat;background-position: center;"></div>
-                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: #795548;">JukeBox Manual</div>
+                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: #795548;">TitanBox Manual</div>
                 </div>
             </div>
             <p></p>
             <div style="justify-content: center; display: flex; cursor: pointer;">
                 <div onclick="window.open('https:/\/forms.gle/B29T3gCRHB6srueB8')" style="height: 80px; background: black; width: 430px; border-radius: 20px; border: solid 1px #444; display: flex; flex-direction: row; align-items: center;">
                     <div style="height: 100%;width: 78px;margin-left: 2px; border-right: 1px solid #444;/*! border-radius: 10px; */background-image: url(./image_assets/google_forms.png);background-size: 90%;background-repeat: no-repeat;background-position: center;"></div>
-                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: #7046BB">JukeBox Preset Submission Form</div>
+                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: #7046BB">TitanBox Preset Submission Form</div>
                 </div>
             </div>
             <p></p>
             <div style="justify-content: center; display: flex; cursor: pointer;">
                 <div onclick="window.open('//discord.gg/xSs9nABmP5')" style="height: 80px; background: black; width: 430px; border-radius: 20px; border: solid 1px #444; display: flex; flex-direction: row; align-items: center;">
                     <div style="height: 100%;width: 80px;border-right: 1px solid #444;/*! border-radius: 10px; */background-image: url(./image_assets/discord.png);background-size: 90%;background-repeat: no-repeat;background-position: center;"></div>
-                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: #5865F2;">JukeBox Community Discord</div>
+                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: #5865F2;">TitanBox Community Discord</div>
                 </div>
             </div>
             <p></p>
             <div style="justify-content: center; display: flex; cursor: pointer;">
                 <div onclick="window.open('//github.com/JukeeBox/JukeBox_TypeScript')" style="height: 80px; background: black; width: 430px; border-radius: 20px; border: solid 1px #444; display: flex; flex-direction: row; align-items: center;">
                     <div style="height: 100%;width: 80px;border-right: 1px solid #444;/*! border-radius: 10px; */background-image: url(./image_assets/github.png);background-size: 90%;background-repeat: no-repeat;background-position: center;"></div>
-                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: white;">JukeBox Source Code</div>
+                    <div style="flex: 1;text-align: center;font-size: 21px;text-decoration: underline;color: white;">TitanBox Source Code</div>
                 </div>
             </div>
             <p></p>
@@ -524,7 +540,7 @@
         */
 
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent)) {
-            document.getElementById("introduction").innerHTML = "JukeBox is an online tool for sketching and sharing chiptune melodies. Make sure that your volume is turned up, then press the play button!";
+            document.getElementById("introduction").innerHTML = "TitanBox is an online tool for sketching and sharing chiptune melodies. Make sure that your volume is turned up, then press the play button!";
             //document.getElementById("keyboard-instructions").style.display = "none";
             //document.getElementById("mobile-instructions").style.display = "";
             //document.getElementById("bar-editing").innerHTML = "Tap the boxes to move to a different part of the song, or tap on the currently selected box to swap which pattern is played during that part of the song.";
@@ -563,7 +579,7 @@
             */
             document.head.appendChild(fileref);
         } else {
-            document.getElementById("beepboxEditorContainer").innerHTML = "Sorry, JukeBox doesn't support your browser. Try a recent version of Chrome, Firefox, Edge, Safari, or Opera.";
+            document.getElementById("beepboxEditorContainer").innerHTML = "Sorry, TitanBox doesn't support your browser. Try a recent version of Chrome, Firefox, Edge, Safari, or Opera.";
         }
 
 		// If the page was loaded with an old song version that old versions of BeepBox support,

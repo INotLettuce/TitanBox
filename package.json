@@ -1,7 +1,7 @@
 {
-	"name": "JukeBox",
+	"name": "titanbox",
 	"version": "0.1.4",
-	"description": "Slarmoo's Box is a mod of Ultrabox that aims to advance Beepbox's capabilities.",
+	"description": "TitanBox is a BeepBox-family music editor with expanded synthesis and composition features.",
 	"author": "Slarmoo",
 	"contributors": [
 		"Slarmoo",
@@ -12,7 +12,7 @@
 		"Choptop84"
 	],
 	"license": "MIT",
-	"homepage": "https://slarmoo.github.io/slarmoosbox/website/",
+	"homepage": "https://jukeebox.github.io/JukeBox_TypeScript/",
 	"type": "module",
 	"main": "main.js",
 	"icon": "path.join(__dirname, 'icon.ico')",
@@ -27,14 +27,14 @@
 		"deploy-files": "bash ./scripts/deploy_files.sh",
 		"start": "electron ./to_deploy",
 		"package": "electron-packager ./to_deploy --platform=darwin,linux,win32 --arch=ia32,x64 --asar --overwrite && npm run build-offline-html",
-		"package-host": "electron-packager ./to_deploy slarmoosbox --asar --overwrite && npm run build-offline-html",
+		"package-host": "electron-packager ./to_deploy titanbox --asar --overwrite && npm run build-offline-html",
 		"live_editor": "bash ./scripts/live_editor.sh",
 		"live_editor_typeless": "bash ./scripts/live_editor_typeless.sh",
 		"let": "npm run live_editor_typeless"
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/slarmoo/slarmoosbox.git"
+		"url": "git+https://github.com/JukeeBox/JukeBox_TypeScript.git"
 	},
 	"devDependencies": {
 		"@electron/packager": "^18.0.0",

@@ -20,7 +20,7 @@ export interface Preset extends BeepBoxOption {
 }
 
 export const fullTagList: string[] = [
-    "chip", "chipwave", "customchip", "fm", "fm4op", "fm6op", "pwm", "supersaw", "pickedstring", "harmonics", "spectrum", "noise", "drumset"
+    "chip", "chipwave", "customchip", "fm", "fm4op", "fm6op", "fm8op", "pwm", "supersaw", "pickedstring", "harmonics", "spectrum", "noise", "drumset"
 
     , "featured", "novelty"
 
@@ -34,7 +34,7 @@ export const fullTagList: string[] = [
 
     , "ubf33", "luxian", "piglinmiguel", "maliciousmandwald", "yupekosi", "xelerate_xd"
     
-    , "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "41box", "jukebox"
+    , "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "px", "jukebox"
 
     , "pre1.0.0", "1.0.0",
 ];
@@ -47,7 +47,7 @@ export function prettyNumber(value: number): string {
 
 export class EditorConfig {
     public static readonly version: string = "1.0.0b"; // Currently using patch versions in display (unlike JB)
-    public static readonly versionDisplayName: string = "JukeBox " + EditorConfig.version;
+    public static readonly versionDisplayName: string = "TitanBox " + EditorConfig.version;
 
     public static readonly releaseNotesURL: string = "./patch_notes.html";
 
@@ -74,6 +74,7 @@ export class EditorConfig {
                 { id:8, name: TypePresets[InstrumentType.supersaw], customType: InstrumentType.supersaw },
                 { id:9, name: TypePresets[InstrumentType.customChipWave], customType: InstrumentType.customChipWave },
                 { id:10, name: TypePresets[InstrumentType.fm6op], customType: InstrumentType.fm6op },
+                { id:11, name: TypePresets[InstrumentType.fm8op], customType: InstrumentType.fm8op },
             ])
         },
         {

@@ -1,7 +1,7 @@
 // Copyright (c) 2012-2022 John Nesky and contributing authors, distributed under the MIT license, see accompanying the LICENSE.md file.
 
 //import {Layout} from "./Layout";
-import { sampleLoadEvents, SampleLoadedEvent, InstrumentType, EffectType, Config, effectsIncludeTransition, effectsIncludeChord, effectsIncludePitchShift, effectsIncludeDetune, effectsIncludeVibrato, effectsIncludeNoteFilter, effectsIncludeDistortion, effectsIncludeBitcrusher, effectsIncludePanning, effectsIncludeChorus, effectsIncludeEcho, effectsIncludeReverb, effectsIncludeRingModulation, effectsIncludeGranular, DropdownID, calculateRingModHertz, effectsIncludePhaser, effectsIncludeInvertWave, effectsIncludeNoteRange } from "../synth/SynthConfig";
+import { sampleLoadEvents, SampleLoadedEvent, InstrumentType, EffectType, Config, getFMOperatorCount, effectsIncludeTransition, effectsIncludeChord, effectsIncludePitchShift, effectsIncludeDetune, effectsIncludeVibrato, effectsIncludeNoteFilter, effectsIncludeDistortion, effectsIncludeBitcrusher, effectsIncludePanning, effectsIncludeChorus, effectsIncludeEcho, effectsIncludeReverb, effectsIncludeRingModulation, effectsIncludeGranular, DropdownID, calculateRingModHertz, effectsIncludePhaser, effectsIncludeInvertWave, effectsIncludeNoteRange } from "../synth/SynthConfig";
 import { BarScrollBar } from "./BarScrollBar";
 import { BeatsPerBarPrompt } from "./BeatsPerBarPrompt";
 import { Change, ChangeGroup } from "./Change";
@@ -93,6 +93,7 @@ function buildPresetOptions(isNoise: boolean, idSet: string): HTMLSelectElement 
         menu.appendChild(option({ value: InstrumentType.supersaw }, EditorConfig.valueToPreset(InstrumentType.supersaw)!.name));
         menu.appendChild(option({ value: InstrumentType.fm }, EditorConfig.valueToPreset(InstrumentType.fm)!.name));
         menu.appendChild(option({ value: InstrumentType.fm6op }, EditorConfig.instrumentToPreset(InstrumentType.fm6op)!.name));
+        menu.appendChild(option({ value: InstrumentType.fm8op }, EditorConfig.instrumentToPreset(InstrumentType.fm8op)!.name));
         menu.appendChild(option({ value: InstrumentType.harmonics }, EditorConfig.valueToPreset(InstrumentType.harmonics)!.name));
         menu.appendChild(option({ value: InstrumentType.pickedString }, EditorConfig.valueToPreset(InstrumentType.pickedString)!.name));
         menu.appendChild(option({ value: InstrumentType.spectrum }, EditorConfig.valueToPreset(InstrumentType.spectrum)!.name));
@@ -381,6 +382,11 @@ class CustomAlgorythmCanvas {
 
     private _change: Change | null = null;
 
+    private get operatorCount(): number {
+        const instrument = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()];
+        return getFMOperatorCount(instrument.type) || 6;
+    }
+
     constructor(public readonly canvas: HTMLCanvasElement, private readonly _doc: SongDocument, private readonly _getChange: (newArray: number[][], carry: number, mode: string) => Change) {
         //canvas.addEventListener("input", this._whenInput);
         //canvas.addEventListener("change", this._whenChange);
@@ -393,14 +399,14 @@ class CustomAlgorythmCanvas {
         //this.continuousEdit = false;
         //this.lastX = 0;
         //this.lastY = 0;
-        this.drawArray = [[], [], [], [], [], []];
-        this.lookUpArray = [[], [], [], [], [], []];
+        this.drawArray = [[], [], [], [], [], [], [], []];
+        this.lookUpArray = [[], [], [], [], [], [], [], []];
         this.carriers = 1;
         this.selected = -1;
-        this.newMods = [[], [], [], [], [], []];
-        this.inverseModulation = [[], [], [], [], [], []];
-        this.feedback = [[], [], [], [], [], []];
-        this.inverseFeedback = [[], [], [], [], [], []];
+        this.newMods = [[], [], [], [], [], [], [], []];
+        this.inverseModulation = [[], [], [], [], [], [], [], []];
+        this.feedback = [[], [], [], [], [], [], [], []];
+        this.inverseFeedback = [[], [], [], [], [], [], [], []];
         this.mode = "algorithm";
 
         this.redrawCanvas();
@@ -415,17 +421,17 @@ class CustomAlgorythmCanvas {
     public fillDrawArray(noReset: boolean = false): void {
         if (noReset) {
             this.drawArray = [];
-            this.drawArray = [[], [], [], [], [], []];
-            this.inverseModulation = [[], [], [], [], [], []];
-            this.lookUpArray = [[], [], [], [], [], []];
-            for (let i: number = 0; i < this.newMods.length; i++) {
+            this.drawArray = [[], [], [], [], [], [], [], []];
+            this.inverseModulation = [[], [], [], [], [], [], [], []];
+            this.lookUpArray = [[], [], [], [], [], [], [], []];
+            for (let i: number = 0; i < this.operatorCount; i++) {
                 for (let o: number = 0; o < this.newMods[i].length; o++) {
                     this.inverseModulation[this.newMods[i][o] - 1].push(i + 1);
                 }
             }
             if (this.mode == "feedback") {
-                this.inverseFeedback = [[], [], [], [], [], []];
-                for (let i: number = 0; i < this.feedback.length; i++) {
+                this.inverseFeedback = [[], [], [], [], [], [], [], []];
+                for (let i: number = 0; i < this.operatorCount; i++) {
                     for (let o: number = 0; o < this.feedback[i].length; o++) {
                         this.inverseFeedback[this.feedback[i][o] - 1].push(i + 1);
                     }
@@ -433,26 +439,26 @@ class CustomAlgorythmCanvas {
             }
         } else {
             this.drawArray = [];
-            this.drawArray = [[], [], [], [], [], []];
+            this.drawArray = [[], [], [], [], [], [], [], []];
             this.carriers = 1;
-            this.newMods = [[], [], [], [], [], []];
-            this.inverseModulation = [[], [], [], [], [], []];
-            this.lookUpArray = [[], [], [], [], [], []];
+            this.newMods = [[], [], [], [], [], [], [], []];
+            this.inverseModulation = [[], [], [], [], [], [], [], []];
+            this.lookUpArray = [[], [], [], [], [], [], [], []];
 
             var oldMods = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].customAlgorithm;
             this.carriers = oldMods.carrierCount;
-            for (let i: number = 0; i < oldMods.modulatedBy.length; i++) {
+            for (let i: number = 0; i < this.operatorCount; i++) {
                 for (let o: number = 0; o < oldMods.modulatedBy[i].length; o++) {
                     this.inverseModulation[oldMods.modulatedBy[i][o] - 1].push(i + 1);
                     this.newMods[i][o] = oldMods.modulatedBy[i][o];
                 }
             }
             if (this.mode == "feedback") {
-                this.feedback = [[], [], [], [], [], []];
-                this.inverseFeedback = [[], [], [], [], [], []];
+                this.feedback = [[], [], [], [], [], [], [], []];
+                this.inverseFeedback = [[], [], [], [], [], [], [], []];
 
                 var oldfeed = this._doc.song.channels[this._doc.channel].instruments[this._doc.getCurrentInstrument()].customFeedbackType.indices;
-                for (let i: number = 0; i < oldfeed.length; i++) {
+                for (let i: number = 0; i < this.operatorCount; i++) {
                     for (let o: number = 0; o < oldfeed[i].length; o++) {
                         this.inverseFeedback[oldfeed[i][o] - 1].push(i + 1);
                         this.feedback[i][o] = oldfeed[i][o];
@@ -460,7 +466,7 @@ class CustomAlgorythmCanvas {
                 }
             }
         }
-        for (let i: number = 0; i < this.inverseModulation.length; i++) {
+        for (let i: number = 0; i < this.operatorCount; i++) {
             if (i < this.carriers) {
                 this.drawArray[this.drawArray.length - 1][i] = i + 1;
                 this.lookUpArray[i] = [0, i];
@@ -468,7 +474,7 @@ class CustomAlgorythmCanvas {
                 if (this.inverseModulation[i][0] != undefined) {
                     let testPos = [this.drawArray.length - (this.lookUpArray[this.inverseModulation[i][this.inverseModulation[i].length - 1] - 1][0] + 2), this.lookUpArray[this.inverseModulation[i][this.inverseModulation[i].length - 1] - 1][1]];
                     if (this.drawArray[testPos[0]][testPos[1]] != undefined) {
-                        while (this.drawArray[testPos[0]][testPos[1]] != undefined && testPos[1] < 6) {
+                        while (this.drawArray[testPos[0]][testPos[1]] != undefined && testPos[1] < 8) {
                             testPos[1]++;
                             if (this.drawArray[testPos[0]][testPos[1]] == undefined) {
                                 this.drawArray[testPos[0]][testPos[1]] = i + 1;
@@ -481,8 +487,8 @@ class CustomAlgorythmCanvas {
                         this.lookUpArray[i] = [this.drawArray.length - (testPos[0] + 1), testPos[1]];
                     }
                 } else {
-                    let testPos = [5, 0];
-                    while (this.drawArray[testPos[0]][testPos[1]] != undefined && testPos[1] < 6) {
+                    let testPos = [this.drawArray.length - 1, 0];
+                    while (this.drawArray[testPos[0]][testPos[1]] != undefined && testPos[1] < 8) {
                         testPos[1]++;
                         if (this.drawArray[testPos[0]][testPos[1]] == undefined) {
                             this.drawArray[testPos[0]][testPos[1]] = i + 1;
@@ -496,6 +502,33 @@ class CustomAlgorythmCanvas {
     }
 
     private drawLines(ctx: CanvasRenderingContext2D): void {
+        const graphSize: number = this.drawArray.length;
+        for (let operator: number = 0; operator < this.operatorCount; operator++) {
+            const targets: number[] = this.mode == "feedback" ? this.inverseFeedback[operator] : this.inverseModulation[operator];
+            const sourcePosition: number[] = this.lookUpArray[operator];
+            if (sourcePosition == undefined) continue;
+            for (const target of targets) {
+                const targetPosition: number[] = this.lookUpArray[target - 1];
+                if (targetPosition == undefined) continue;
+                const startX: number = (sourcePosition[1] + 0.5) * 24;
+                const startY: number = (graphSize - sourcePosition[0] - 0.5) * 24;
+                const endX: number = (targetPosition[1] + 0.5) * 24;
+                const endY: number = (graphSize - targetPosition[0] - 0.5) * 24;
+                const angle: number = Math.atan2(endY - startY, endX - startX);
+                ctx.strokeStyle = ColorConfig.getArbitaryChannelColor("pitch", operator).primaryChannel;
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.bezierCurveTo((startX + endX) / 2, startY, (startX + endX) / 2, endY, endX, endY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - 6 * Math.cos(angle - 0.5), endY - 6 * Math.sin(angle - 0.5));
+                ctx.moveTo(endX, endY);
+                ctx.lineTo(endX - 6 * Math.cos(angle + 0.5), endY - 6 * Math.sin(angle + 0.5));
+                ctx.stroke();
+            }
+        }
+        return;
         if (this.mode == "feedback") {
             for (let off: number = 0; off < 6; off++) {
                 ctx.strokeStyle = ColorConfig.getArbitaryChannelColor("pitch", off).primaryChannel;
@@ -592,10 +625,10 @@ class CustomAlgorythmCanvas {
 
         // Black BG
         ctx.fillStyle = ColorConfig.getComputed("--editor-background");
-        ctx.fillRect(0, 0, 144, 144);
+        ctx.fillRect(0, 0, 192, 192);
 
-        for (let x: number = 0; x < 6; x++) {
-            for (let y: number = 0; y < 6; y++) {
+        for (let x: number = 0; x < 8; x++) {
+            for (let y: number = 0; y < 8; y++) {
                 ctx.fillStyle = ColorConfig.getComputed("--track-editor-bg-pitch-dim");
                 ctx.fillRect(x * 24 + 12, ((y) * 24), 12, 12);
                 ctx.fillStyle = ColorConfig.getComputed("--editor-background");
@@ -626,8 +659,9 @@ class CustomAlgorythmCanvas {
     private _onMouseMove = (event: MouseEvent): void => {
         if (this.mouseDown) {//todo rework to handle draging and single clicks differently
 
-            var x = (event.clientX || event.pageX) - this.canvas.getBoundingClientRect().left;
-            var y = Math.floor((event.clientY || event.pageY) - this.canvas.getBoundingClientRect().top);
+            const bounds = this.canvas.getBoundingClientRect();
+            var x = ((event.clientX || event.pageX) - bounds.left) * this.canvas.width / bounds.width;
+            var y = Math.floor(((event.clientY || event.pageY) - bounds.top) * this.canvas.height / bounds.height);
 
             var ctx = this.canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -637,8 +671,8 @@ class CustomAlgorythmCanvas {
             var xindex = Math.ceil(x / 12)
             yindex = (yindex / 2) - Math.floor(yindex / 2) >= 0.5 ? Math.floor(yindex / 2) : -1;
             xindex = (xindex / 2) + 0.5 - Math.floor(xindex / 2) <= 0.5 ? Math.floor(xindex / 2) - 1 : -1;
-            yindex = yindex >= 0 && yindex <= 5 ? yindex : -1;
-            xindex = xindex >= 0 && xindex <= 5 ? xindex : -1;
+            yindex = yindex >= 0 && yindex <= 7 ? yindex : -1;
+            xindex = xindex >= 0 && xindex <= 7 ? xindex : -1;
             ctx.fillRect(xindex * 24 + 12, yindex * 24, 2, 2);
 
             if (this.selected == -1) {
@@ -1123,11 +1157,16 @@ export class SongEditor {
 
     private readonly _feedback6OpTypeSelect: HTMLSelectElement = buildOptions(select(), Config.feedbacks6Op.map(feedback => feedback.name));
     private readonly _feedback6OpRow1: HTMLDivElement = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("feedbackType") }, "Feedback:"), div({ class: "selectContainer" }, this._feedback6OpTypeSelect));
+    private readonly _feedback8OpTypeSelect: HTMLSelectElement = buildOptions(select(), Config.feedbacks8Op.map(feedback => feedback.name));
+    private readonly _feedback8OpRow1: HTMLDivElement = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("feedbackType") }, "Feedback:"), div({ class: "selectContainer" }, this._feedback8OpTypeSelect));
 
     private readonly _algorithmCanvasSwitch: HTMLButtonElement = button({ style: "margin-left:0em; height:1.5em; width: 10px; padding: 0px; font-size: 8px;", onclick: (e:Event) => this._toggleAlgorithmCanvas(e) }, "A");
-    private readonly _customAlgorithmCanvas: CustomAlgorythmCanvas = new CustomAlgorythmCanvas(canvas({ width: 144, height: 144, style: "border:2px solid " + ColorConfig.uiWidgetBackground, id: "customAlgorithmCanvas" }), this.doc, (newArray: number[][], carry: number, mode: string) => new ChangeCustomAlgorythmorFeedback(this.doc, newArray, carry, mode));
+    private readonly _customAlgorithmCanvas: CustomAlgorythmCanvas = new CustomAlgorythmCanvas(canvas({ width: 192, height: 192, style: "width:144px; height:144px; border:2px solid " + ColorConfig.uiWidgetBackground, id: "customAlgorithmCanvas" }), this.doc, (newArray: number[][], carry: number, mode: string) => new ChangeCustomAlgorythmorFeedback(this.doc, newArray, carry, mode));
     private readonly _algorithm6OpSelect: HTMLSelectElement = buildOptions(select(), Config.algorithms6Op.map(algorithm => algorithm.name));
-    private readonly _algorithm6OpSelectRow: HTMLDivElement = div(div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("algorithm") }, "Algorithm: "), div({ class: "selectContainer" }, this._algorithm6OpSelect))
+    private readonly _algorithm6OpOnlyRow: HTMLDivElement = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("algorithm") }, "Algorithm: "), div({ class: "selectContainer" }, this._algorithm6OpSelect));
+    private readonly _algorithm8OpSelect: HTMLSelectElement = buildOptions(select(), Config.algorithms8Op.map(algorithm => algorithm.name));
+    private readonly _algorithm8OpOnlyRow: HTMLDivElement = div({ class: "selectRow" }, span({ class: "tip", onclick: () => this._openPrompt("algorithm") }, "Algorithm: "), div({ class: "selectContainer" }, this._algorithm8OpSelect));
+    private readonly _algorithm6OpSelectRow: HTMLDivElement = div(this._algorithm6OpOnlyRow, this._algorithm8OpOnlyRow
         , div({ style: "height:144px; display:flex; flex-direction: row; align-items:center; justify-content:center;" }, div({ style: "display:block; width:10px; margin-right: 0.2em" }, this._algorithmCanvasSwitch), div({ style: "width:144px; height:144px;" }, this._customAlgorithmCanvas.canvas)));//temp
 
     private readonly _instrumentCopyButton: HTMLButtonElement = button({ style: "max-width:86px; width: 86px;", class: "copyButton", title: "Copy Instrument (⇧C)" }, [
@@ -1215,6 +1254,7 @@ export class SongEditor {
         this._phaseModGroup,
         this._feedbackRow1,
         this._feedback6OpRow1,
+        this._feedback8OpRow1,
         this._feedbackRow2,
         this._spectrumRow,
         this._harmonicsRow,
@@ -1546,7 +1586,7 @@ export class SongEditor {
             div({ style: "width: 3em; margin-right: .3em;", class: "tip", onclick: () => this._openPrompt("operatorFrequency") }, "Freq:"),
             div({ class: "tip", onclick: () => this._openPrompt("operatorVolume") }, "Volume:"),
         ));
-        for (let i: number = 0; i < Config.operatorCount + 2; i++) {
+        for (let i: number = 0; i < Config.fm8opOperatorCount; i++) {
             const operatorIndex: number = i;
             const operatorNumber: HTMLDivElement = div({ style: "margin-right: 0px; color: " + ColorConfig.secondaryText + ";" }, i + 1 + "");
             const frequencySelect: HTMLSelectElement = buildOptions(select({ style: "width: 100%;", title: "Frequency" }), Config.operatorFrequencies.map(freq => freq.name));
@@ -1690,6 +1730,8 @@ export class SongEditor {
         this._feedbackTypeSelect.addEventListener("change", this._whenSetFeedbackType);
         this._algorithm6OpSelect.addEventListener("change", this._whenSet6OpAlgorithm);
         this._feedback6OpTypeSelect.addEventListener("change", this._whenSet6OpFeedbackType);
+        this._algorithm8OpSelect.addEventListener("change", this._whenSet8OpAlgorithm);
+        this._feedback8OpTypeSelect.addEventListener("change", this._whenSet8OpFeedbackType);
         this._chipWaveSelect.addEventListener("change", this._whenSetChipWave);
         this._ringModWaveSelect.addEventListener("change", this._whenSetRingModChipWave);
         // advloop addition
@@ -1749,7 +1791,7 @@ export class SongEditor {
         this._instrumentVolumeSlider.container.style.setProperty("--mod-border-radius", "50%");
         this._feedbackAmplitudeSlider.container.style.setProperty("--mod-color", ColorConfig.multiplicativeModSlider);
         this._feedbackAmplitudeSlider.container.style.setProperty("--mod-border-radius", "50%");
-        for (let i: number = 0; i < Config.operatorCount + 2; i++) {
+        for (let i: number = 0; i < Config.fm8opOperatorCount; i++) {
             this._operatorAmplitudeSliders[i].container.style.setProperty("--mod-color", ColorConfig.multiplicativeModSlider);
             this._operatorAmplitudeSliders[i].container.style.setProperty("--mod-border-radius", "50%");
         }
@@ -2776,7 +2818,7 @@ export class SongEditor {
             }
 
 
-            if (instrument.type == InstrumentType.fm || instrument.type == InstrumentType.fm6op) {
+            if (getFMOperatorCount(instrument.type) > 0) {
                 this._phaseModGroup.style.display = "";
                 this._feedbackRow2.style.display = "";
                 this._chipWaveSelectRow.style.display = "none";
@@ -2791,7 +2833,13 @@ export class SongEditor {
                 setSelectedValue(this._algorithmSelect, instrument.algorithm);
                 setSelectedValue(this._feedbackTypeSelect, instrument.feedbackType);
                 this._feedbackAmplitudeSlider.updateValue(instrument.feedbackAmplitude);
-                for (let i: number = 0; i < Config.operatorCount + (instrument.type == InstrumentType.fm6op ? 2 : 0); i++) {
+                const fmOperatorCount: number = getFMOperatorCount(instrument.type);
+                for (let i: number = 0; i < Config.fm8opOperatorCount; i++) {
+                    this._operatorRows[i].style.display = i < fmOperatorCount ? "" : "none";
+                    if (i >= fmOperatorCount) {
+                        this._operatorDropdownGroups[i].style.display = "none";
+                        continue;
+                    }
                     const isCarrier: boolean = instrument.type == InstrumentType.fm ? (i < Config.algorithms[instrument.algorithm].carrierCount) : (i < instrument.customAlgorithm.carrierCount);
                     this._operatorRows[i].style.color = isCarrier ? ColorConfig.primaryText : "";
                     setSelectedValue(this._operatorFrequencySelects[i], instrument.operators[i].frequency);
@@ -2817,27 +2865,39 @@ export class SongEditor {
                     setSelectedValue(this._feedback6OpTypeSelect, instrument.feedbackType6Op);
                     this._customAlgorithmCanvas.redrawCanvas();
                     this._algorithm6OpSelectRow.style.display = "";
+                    this._algorithm6OpOnlyRow.style.display = "";
+                    this._algorithm8OpOnlyRow.style.display = "none";
                     this._feedback6OpRow1.style.display = "";
-                    this._operatorRows[4].style.display = "";
-                    this._operatorRows[5].style.display = "";
-                    this._operatorDropdownGroups[4].style.display = (this._openOperatorDropdowns[4] ? "" : "none");
-                    this._operatorDropdownGroups[5].style.display = (this._openOperatorDropdowns[5] ? "" : "none");
+                    this._feedback8OpRow1.style.display = "none";
+                    this._algorithmSelectRow.style.display = "none";
+                    this._feedbackRow1.style.display = "none";
+                } else if (instrument.type == InstrumentType.fm8op) {
+                    setSelectedValue(this._algorithm8OpSelect, instrument.algorithm6Op);
+                    setSelectedValue(this._feedback8OpTypeSelect, instrument.feedbackType6Op);
+                    this._customAlgorithmCanvas.redrawCanvas();
+                    this._algorithm6OpSelectRow.style.display = "";
+                    this._algorithm6OpOnlyRow.style.display = "none";
+                    this._algorithm8OpOnlyRow.style.display = "";
+                    this._feedback6OpRow1.style.display = "none";
+                    this._feedback8OpRow1.style.display = "";
                     this._algorithmSelectRow.style.display = "none";
                     this._feedbackRow1.style.display = "none";
                 } else {
                     this._algorithm6OpSelectRow.style.display = "none";
+                    this._algorithm6OpOnlyRow.style.display = "none";
+                    this._algorithm8OpOnlyRow.style.display = "none";
                     this._feedback6OpRow1.style.display = "none";
-                    this._operatorRows[4].style.display = "none";
-                    this._operatorRows[5].style.display = "none";
-                    this._operatorDropdownGroups[4].style.display = "none";
-                    this._operatorDropdownGroups[5].style.display = "none";
+                    this._feedback8OpRow1.style.display = "none";
                     this._feedbackRow1.style.display = "";
                     this._algorithmSelectRow.style.display = "";
                 }
             }
             else {
                 this._algorithm6OpSelectRow.style.display = "none";
+                this._algorithm6OpOnlyRow.style.display = "none";
+                this._algorithm8OpOnlyRow.style.display = "none";
                 this._feedback6OpRow1.style.display = "none";
+                this._feedback8OpRow1.style.display = "none";
                 this._algorithmSelectRow.style.display = "none";
                 this._phaseModGroup.style.display = "none";
                 this._feedbackRow1.style.display = "none";
@@ -5414,6 +5474,16 @@ export class SongEditor {
     private _whenSet6OpAlgorithm = (): void => {
         this.doc.record(new Change6OpAlgorithm(this.doc, this._algorithm6OpSelect.selectedIndex));
         this._customAlgorithmCanvas.reset()
+    }
+
+    private _whenSet8OpFeedbackType = (): void => {
+        this.doc.record(new Change6OpFeedbackType(this.doc, this._feedback8OpTypeSelect.selectedIndex));
+        this._customAlgorithmCanvas.reset();
+    }
+
+    private _whenSet8OpAlgorithm = (): void => {
+        this.doc.record(new Change6OpAlgorithm(this.doc, this._algorithm8OpSelect.selectedIndex));
+        this._customAlgorithmCanvas.reset();
     }
 
     private _whenSelectInstrument = (event: MouseEvent): void => {

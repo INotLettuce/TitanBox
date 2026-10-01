@@ -1,6 +1,6 @@
 // Copyright (c) 2012-2022 John Nesky and contributing authors, distributed under the MIT license, see accompanying the LICENSE.md file.
 
-import { Algorithm, Dictionary, FilterType, SustainType, InstrumentType, EffectType, AutomationTarget, Config, effectsIncludeDistortion, LFOEnvelopeTypes, RandomEnvelopeTypes } from "../synth/SynthConfig";
+import { Algorithm, Dictionary, FilterType, SustainType, InstrumentType, EffectType, AutomationTarget, Config, getFMOperatorCount, effectsIncludeDistortion, LFOEnvelopeTypes, RandomEnvelopeTypes } from "../synth/SynthConfig";
 import { NotePin, Note, makeNotePin, Pattern, FilterSettings, FilterControlPoint, SpectrumWave, HarmonicsWave, Instrument, Channel, Song, Synth, clamp } from "../synth/synth";
 import { Preset, PresetCategory, EditorConfig, fullTagList } from "./EditorConfig";
 import { Change, ChangeGroup, ChangeSequence, UndoableChange } from "./Change";
@@ -1019,6 +1019,7 @@ export class ChangeRandomGeneratedInstrument extends Change {
                 { item: InstrumentType.spectrum, weight: 2 },
                 { item: InstrumentType.fm, weight: 2 },
                 { item: InstrumentType.fm6op, weight: 2 },
+                { item: InstrumentType.fm8op, weight: 1 },
             ]);
             instrument.preset = instrument.type = type;
 
@@ -1617,17 +1618,20 @@ export class ChangeRandomGeneratedInstrument extends Change {
                     instrument.spectrumWave.markCustomWaveDirty();
                 } break;
                 case InstrumentType.fm6op:
+                case InstrumentType.fm8op:
                 case InstrumentType.fm: {
                     if (type == InstrumentType.fm) {
                         instrument.algorithm = (Math.random() * Config.algorithms.length) | 0;
                         instrument.feedbackType = (Math.random() * Config.feedbacks.length) | 0;
                     } else {
-                        instrument.algorithm6Op = (Math.random() * (Config.algorithms6Op.length - 1) + 1) | 0;
-                        instrument.customAlgorithm.fromPreset(instrument.algorithm6Op);
-                        instrument.feedbackType6Op = (Math.random() * (Config.feedbacks6Op.length - 1) + 1) | 0;
-                        instrument.customFeedbackType.fromPreset(instrument.feedbackType6Op);
+                        const algorithms = type == InstrumentType.fm8op ? Config.algorithms8Op : Config.algorithms6Op;
+                        const feedbacks = type == InstrumentType.fm8op ? Config.feedbacks8Op : Config.feedbacks6Op;
+                        instrument.algorithm6Op = (Math.random() * (algorithms.length - 1) + 1) | 0;
+                        instrument.customAlgorithm.fromPreset(instrument.algorithm6Op, type);
+                        instrument.feedbackType6Op = (Math.random() * (feedbacks.length - 1) + 1) | 0;
+                        instrument.customFeedbackType.fromPreset(instrument.feedbackType6Op, type);
                     }
-                    const algorithm: Algorithm = type == InstrumentType.fm ? Config.algorithms[instrument.algorithm] : Config.algorithms6Op[instrument.algorithm6Op];
+                    const algorithm: Algorithm = type == InstrumentType.fm ? Config.algorithms[instrument.algorithm] : type == InstrumentType.fm8op ? Config.algorithms8Op[instrument.algorithm6Op] : Config.algorithms6Op[instrument.algorithm6Op];
                     for (let i: number = 0; i < algorithm.carrierCount; i++) {
                         instrument.operators[i].frequency = selectCurvedDistribution(0, Config.operatorFrequencies.length - 1, 0, 3);
                         instrument.operators[i].amplitude = selectCurvedDistribution(0, Config.operatorAmplitudeMax, Config.operatorAmplitudeMax - 1, 2);
@@ -1662,7 +1666,7 @@ export class ChangeRandomGeneratedInstrument extends Change {
                             ]);
                         }
                     }
-                    for (let i: number = algorithm.carrierCount; i < Config.operatorCount + (type == InstrumentType.fm6op ? 2 : 0); i++) {
+                    for (let i: number = algorithm.carrierCount; i < getFMOperatorCount(type); i++) {
                         instrument.operators[i].frequency = selectCurvedDistribution(3, Config.operatorFrequencies.length - 1, 0, 3);
                         instrument.operators[i].amplitude = (Math.pow(Math.random(), 2) * Config.operatorAmplitudeMax) | 0;
                         if (instrument.envelopeCount < Config.maxEnvelopeCount && Math.random() < 0.4) {
@@ -3341,7 +3345,7 @@ export class Change6OpAlgorithm extends Change {
         if (oldValue != newValue) {
             instrument.algorithm6Op = newValue;
             if (newValue != 0) {
-                instrument.customAlgorithm.fromPreset(newValue);
+                instrument.customAlgorithm.fromPreset(newValue, instrument.type);
             }
             instrument.preset = instrument.type;
             doc.notifier.changed();
@@ -3358,7 +3362,7 @@ export class Change6OpFeedbackType extends Change {
         if (oldValue != newValue) {
             instrument.feedbackType6Op = newValue;
             if (newValue != 0) {
-                instrument.customFeedbackType.fromPreset(newValue);
+                instrument.customFeedbackType.fromPreset(newValue, instrument.type);
             }
             instrument.preset = instrument.type;
             doc.notifier.changed();
