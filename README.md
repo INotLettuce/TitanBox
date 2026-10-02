@@ -1,6 +1,8 @@
-# Slarmoo's Box Testing
+# TitanBox
 
-Slarmoo's Box is an online tool for sketching and sharing instrumental music.
+TitanBox is an expanded BeepBox-family music editor with features from Slarmoo's Box, UltraBox, JummBox, and other BeepBox mods.
+
+TitanBox is an online tool for sketching and sharing instrumental music.
 You can find it [here](https://github.com/slarmoo/slarmoosbox/).
 It is a modification of [Ultrabox](https://ultraabox.github.io), which is a modification of [JummBox](https://github.com/jummbus/jummbox), which inturn is a modification of the [original BeepBox](https://beepbox.co).
 

@@ -83,10 +83,18 @@ export const enum InstrumentType {
     customChipWave,
     mod,
     fm6op,
+    fm8op,
     length,
 }
 
-export const TypePresets: ReadonlyArray<string> = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "supersaw", "chip (custom)", "mod", "FM (6-op)"];
+export const TypePresets: ReadonlyArray<string> = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "supersaw", "chip (custom)", "mod", "FM (6-op)", "FM (8-op)"];
+
+export function getFMOperatorCount(type: InstrumentType): number {
+    if (type == InstrumentType.fm8op) return 8;
+    if (type == InstrumentType.fm6op) return 6;
+    if (type == InstrumentType.fm) return 4;
+    return 0;
+}
 
 export const enum DropdownID {
     Vibrato = 0,
@@ -130,7 +138,9 @@ export const enum EnvelopeComputeIndex {
     stringSustain,
     unison,
     operatorFrequency0, operatorFrequency1, operatorFrequency2, operatorFrequency3, operatorFrequency4, operatorFrequency5,
+    operatorFrequency6, operatorFrequency7,
     operatorAmplitude0, operatorAmplitude1, operatorAmplitude2, operatorAmplitude3, operatorAmplitude4, operatorAmplitude5,
+    operatorAmplitude6, operatorAmplitude7,
     feedbackAmplitude,
     pitchShift,
     detune,
@@ -995,8 +1005,8 @@ export class Config {
         // { name: "absolute freedom (÷48)",stepsPerBeat: 48, /*ticksPerArpeggio: 3, arpeggioPatterns: [[0], [0, 1],[0, 1, 2, 1]],*/ roundUpThresholds: null},
 	]);
 
-    public static readonly instrumentTypeNames: ReadonlyArray<string> = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "supersaw", "custom chip", "mod", "FM6op"];
-    public static readonly instrumentTypeHasSpecialInterval: ReadonlyArray<boolean> = [true, true, false, false, false, true, false, false, false, false, false];
+    public static readonly instrumentTypeNames: ReadonlyArray<string> = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "supersaw", "custom chip", "mod", "FM6op", "FM8op"];
+    public static readonly instrumentTypeHasSpecialInterval: ReadonlyArray<boolean> = [true, true, false, false, false, true, false, false, false, false, false, false, false];
     public static readonly chipBaseExpression: number = 0.03375; // Doubled by unison feature, but affected by expression adjustments per unison setting and wave shape. Custom chip is multiplied by 0.05 in instrumentState.updateWaves
     public static readonly fmBaseExpression: number = 0.03;
     public static readonly noiseBaseExpression: number = 0.19;
@@ -1293,8 +1303,9 @@ export class Config {
         { name: "monophonic", customInterval: false, arpeggiates: false, strumParts: 0, singleTone: true}
     ]);
     public static readonly maxChordSize: number = 9;
+    public static readonly fm8opOperatorCount: number = 8;
     public static readonly operatorCount: number = 4;
-    public static readonly maxPitchOrOperatorCount: number = Math.max(Config.maxChordSize, Config.operatorCount + 2);
+    public static readonly maxPitchOrOperatorCount: number = Math.max(Config.maxChordSize, Config.fm8opOperatorCount);
     public static readonly algorithms: DictionaryArray<Algorithm> = toNameMap([
         { name: "1←(2 3 4)", carrierCount: 1, associatedCarrier: [1, 1, 1, 1], modulatedBy: [[2, 3, 4], [], [], []] },
         { name: "1←(2 3←4)", carrierCount: 1, associatedCarrier: [1, 1, 1, 1], modulatedBy: [[2, 3], [], [4], []] },
@@ -1355,7 +1366,14 @@ export class Config {
         { name: "1←4(2←5(3←6", carrierCount: 3, associatedCarrier: [1, 2, 3, 1, 2, 3], modulatedBy: [[2, 3, 4], [3, 5], [6], [], [], []] },
         { name: "1←4(2←5 3←6", carrierCount: 3, associatedCarrier: [1, 2, 3, 1, 2, 3], modulatedBy: [[2, 3, 4], [5], [6], [], [], []] },
     ]);
-    public static readonly operatorCarrierInterval: ReadonlyArray<number> = [0.0, 0.04, -0.073, 0.091, 0.061, 0.024];
+    public static readonly algorithms8Op: DictionaryArray<Algorithm> = toNameMap([
+        { name: "Custom", carrierCount: 1, associatedCarrier: [1, 1, 1, 1, 1, 1, 1, 1], modulatedBy: [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []] },
+        { name: "1←2←3←4←5←6←7←8", carrierCount: 1, associatedCarrier: [1, 1, 1, 1, 1, 1, 1, 1], modulatedBy: [[2], [3], [4], [5], [6], [7], [8], []] },
+        { name: "1←(2 3 4 5 6 7 8)", carrierCount: 1, associatedCarrier: [1, 1, 1, 1, 1, 1, 1, 1], modulatedBy: [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []] },
+        { name: "1 2 3 4←(5 6 7 8)", carrierCount: 4, associatedCarrier: [1, 2, 3, 4, 1, 2, 3, 4], modulatedBy: [[], [], [], [], [5, 6, 7, 8], [], [], []] },
+        { name: "1 2 3 4 5 6 7 8", carrierCount: 8, associatedCarrier: [1, 2, 3, 4, 5, 6, 7, 8], modulatedBy: [[], [], [], [], [], [], [], []] },
+    ]);
+    public static readonly operatorCarrierInterval: ReadonlyArray<number> = [0.0, 0.04, -0.073, 0.091, 0.061, 0.024, 0.0, 0.0];
     public static readonly operatorAmplitudeMax: number = 15;
     public static readonly operatorFrequencies: DictionaryArray<OperatorFrequency> = toNameMap([
         { name: "0.12×", mult: 0.125, hzOffset: 0.0, amplitudeSign: 1.0 },
@@ -1560,6 +1578,13 @@ export class Config {
         { name: "1↔4 2↔5 3↔6", indices: [[4], [5], [6], [1], [2], [3]] },
         { name: "(1,2,3,4,5)→6", indices: [[], [], [], [], [], [1, 2, 3, 4, 5]] },
         { name: "ALL", indices: [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]] },
+    ]);
+    public static readonly feedbacks8Op: DictionaryArray<Feedback> = toNameMap([
+        { name: "Custom", indices: [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []] },
+        { name: "1↻ 2↻ 3↻ 4↻ 5↻ 6↻ 7↻ 8↻", indices: [[1], [2], [3], [4], [5], [6], [7], [8]] },
+        { name: "1→2→3→4→5→6→7→8", indices: [[], [1], [2], [3], [4], [5], [6], [7]] },
+        { name: "1↔2 3↔4 5↔6 7↔8", indices: [[2], [1], [4], [3], [6], [5], [8], [7]] },
+        { name: "ALL", indices: [[1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8]] },
     ]);
     public static readonly chipNoiseLength: number = 1 << 15; // 32768
     public static readonly spectrumNoiseLength: number = 1 << 15; // 32768
@@ -1838,10 +1863,10 @@ export class Config {
         { name: "noteVolume",             computeIndex: EnvelopeComputeIndex.noteVolume,                displayName: "note volume",      perNote: true,  interleave: false, isFilter: false, /*range: Config.volumeRange,             */    maxCount: 1, effect: null, compatibleInstruments: null },
         { name: "pulseWidth",             computeIndex: EnvelopeComputeIndex.pulseWidth,                displayName: "pulse width",      perNote: true,  interleave: false, isFilter: false, /*range: Config.pulseWidthRange,         */    maxCount: 1, effect: null, compatibleInstruments: [InstrumentType.pwm, InstrumentType.supersaw] },
         { name: "stringSustain",          computeIndex: EnvelopeComputeIndex.stringSustain,             displayName: "sustain",          perNote: true,  interleave: false, isFilter: false, /*range: Config.stringSustainRange,      */    maxCount: 1, effect: null, compatibleInstruments: [InstrumentType.pickedString] },
-        { name: "unison",                 computeIndex: EnvelopeComputeIndex.unison,                    displayName: "unison",           perNote: true,  interleave: false, isFilter: false, /*range: Config.defaultAutomationRange,  */    maxCount: 1, effect: null, compatibleInstruments: [InstrumentType.chip, InstrumentType.harmonics, InstrumentType.pickedString, InstrumentType.customChipWave, InstrumentType.pwm, InstrumentType.noise, InstrumentType.spectrum, InstrumentType.drumset, InstrumentType.fm, InstrumentType.fm6op] },
-        { name: "operatorFrequency",      computeIndex: EnvelopeComputeIndex.operatorFrequency0,        displayName: "fm# freq",         perNote: true,  interleave: true, isFilter: false, /*range: Config.defaultAutomationRange,  */    maxCount: Config.operatorCount+2, effect: null, compatibleInstruments: [InstrumentType.fm, InstrumentType.fm6op] },
-        { name: "operatorAmplitude",      computeIndex: EnvelopeComputeIndex.operatorAmplitude0,        displayName: "fm# volume",       perNote: true,  interleave: false, isFilter: false, /*range: Config.operatorAmplitudeMax + 1,*/    maxCount: Config.operatorCount+2, effect: null, compatibleInstruments: [InstrumentType.fm, InstrumentType.fm6op] },
-        { name: "feedbackAmplitude",      computeIndex: EnvelopeComputeIndex.feedbackAmplitude,         displayName: "fm feedback",      perNote: true,  interleave: false, isFilter: false, /*range: Config.operatorAmplitudeMax + 1,*/    maxCount: 1, effect: null, compatibleInstruments: [InstrumentType.fm, InstrumentType.fm6op] },
+        { name: "unison",                 computeIndex: EnvelopeComputeIndex.unison,                    displayName: "unison",           perNote: true,  interleave: false, isFilter: false, /*range: Config.defaultAutomationRange,  */    maxCount: 1, effect: null, compatibleInstruments: [InstrumentType.chip, InstrumentType.harmonics, InstrumentType.pickedString, InstrumentType.customChipWave, InstrumentType.pwm, InstrumentType.noise, InstrumentType.spectrum, InstrumentType.drumset, InstrumentType.fm, InstrumentType.fm6op, InstrumentType.fm8op] },
+        { name: "operatorFrequency",      computeIndex: EnvelopeComputeIndex.operatorFrequency0,        displayName: "fm# freq",         perNote: true,  interleave: true, isFilter: false, /*range: Config.defaultAutomationRange,  */    maxCount: Config.fm8opOperatorCount, effect: null, compatibleInstruments: [InstrumentType.fm, InstrumentType.fm6op, InstrumentType.fm8op] },
+        { name: "operatorAmplitude",      computeIndex: EnvelopeComputeIndex.operatorAmplitude0,        displayName: "fm# volume",       perNote: true,  interleave: false, isFilter: false, /*range: Config.operatorAmplitudeMax + 1,*/    maxCount: Config.fm8opOperatorCount, effect: null, compatibleInstruments: [InstrumentType.fm, InstrumentType.fm6op, InstrumentType.fm8op] },
+        { name: "feedbackAmplitude",      computeIndex: EnvelopeComputeIndex.feedbackAmplitude,         displayName: "fm feedback",      perNote: true,  interleave: false, isFilter: false, /*range: Config.operatorAmplitudeMax + 1,*/    maxCount: 1, effect: null, compatibleInstruments: [InstrumentType.fm, InstrumentType.fm6op, InstrumentType.fm8op] },
         { name: "pitchShift",             computeIndex: EnvelopeComputeIndex.pitchShift,                displayName: "pitch shift",      perNote: true,  interleave: false, isFilter: false, /*range: Config.pitchShiftRange,         */    maxCount: 1, effect: EffectType.pitchShift, compatibleInstruments: null },
         { name: "detune",                 computeIndex: EnvelopeComputeIndex.detune,                    displayName: "detune",           perNote: true,  interleave: false, isFilter: false, /*range: Config.detuneMax + 1,           */    maxCount: 1, effect: EffectType.detune, compatibleInstruments: null },
         { name: "vibratoDepth",           computeIndex: EnvelopeComputeIndex.vibratoDepth,              displayName: "vibrato depth",    perNote: true,  interleave: false, isFilter: false, /*range: Config.defaultAutomationRange,  */    maxCount: 1, effect: EffectType.vibrato, compatibleInstruments: null },

@@ -45,7 +45,7 @@ export class AddSamplesPrompt {
         this._addSampleButton,
         this._addMultipleSamplesButton
     );
-    private readonly _instructionsLink: HTMLAnchorElement = a({ href: "#" }, "Here's more information and some instructions on how to use custom samples in JukeBox.");
+    private readonly _instructionsLink: HTMLAnchorElement = a({ href: "#" }, "Here's more information and some instructions on how to use custom samples in TitanBox.");
     private readonly _description: HTMLDivElement = div(
         div({ style: "margin-bottom: 0.5em; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text;" },
             "In order to use the old Paandora's Box samples, you should add ",
@@ -68,7 +68,7 @@ export class AddSamplesPrompt {
         { style: "display: none; margin-top: 0; -webkit-user-select: text; -moz-user-select: text; -ms-user-select: text; user-select: text; cursor: text; overflow-y: auto;" },
         h2("Add Samples"),
         div({ style: "margin-top: 0.5em; margin-bottom: 0.5em;" },
-            "In JukeBox, custom samples are loaded from arbitrary URLs.",
+            "In TitanBox, custom samples are loaded from arbitrary URLs.",
         ),
         div({ style: `margin-top: 0.5em; margin-bottom: 0.5em; color: ${ColorConfig.secondaryText};` },
             "(Technically, the web server behind the URL needs to support ",

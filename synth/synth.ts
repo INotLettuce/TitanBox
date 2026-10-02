@@ -1,6 +1,6 @@
 // Copyright (c) 2012-2022 John Nesky and contributing authors, distributed under the MIT license, see accompanying the LICENSE.md file.
 
-import { startLoadingSample, sampleLoadingState, SampleLoadingState, sampleLoadEvents, SampleLoadedEvent, SampleLoadingStatus, loadBuiltInSamples, Dictionary, DictionaryArray, toNameMap, FilterType, SustainType, EnvelopeType, InstrumentType, EffectType, EnvelopeComputeIndex, Transition, Unison, Chord, Vibrato, Envelope, AutomationTarget, Config, getDrumWave, drawNoiseSpectrum, getArpeggioPitchIndex, performIntegralOld, getPulseWidthRatio, effectsIncludeTransition, effectsIncludeChord, effectsIncludePitchShift, effectsIncludeDetune, effectsIncludeVibrato, effectsIncludeNoteFilter, effectsIncludeDistortion, effectsIncludeBitcrusher, effectsIncludePanning, effectsIncludeChorus, effectsIncludeEcho, effectsIncludeReverb, effectsIncludeNoteRange, effectsIncludeRingModulation, effectsIncludeGranular, OperatorWave, LFOEnvelopeTypes, RandomEnvelopeTypes, GranularEnvelopeType, calculateRingModHertz, effectsIncludePhaser, effectsIncludeInvertWave } from "./SynthConfig";
+import { startLoadingSample, sampleLoadingState, SampleLoadingState, sampleLoadEvents, SampleLoadedEvent, SampleLoadingStatus, loadBuiltInSamples, Dictionary, DictionaryArray, toNameMap, FilterType, SustainType, EnvelopeType, InstrumentType, EffectType, EnvelopeComputeIndex, Transition, Unison, Chord, Vibrato, Envelope, AutomationTarget, Config, getFMOperatorCount, getDrumWave, drawNoiseSpectrum, getArpeggioPitchIndex, performIntegralOld, getPulseWidthRatio, effectsIncludeTransition, effectsIncludeChord, effectsIncludePitchShift, effectsIncludeDetune, effectsIncludeVibrato, effectsIncludeNoteFilter, effectsIncludeDistortion, effectsIncludeBitcrusher, effectsIncludePanning, effectsIncludeChorus, effectsIncludeEcho, effectsIncludeReverb, effectsIncludeNoteRange, effectsIncludeRingModulation, effectsIncludeGranular, OperatorWave, LFOEnvelopeTypes, RandomEnvelopeTypes, GranularEnvelopeType, calculateRingModHertz, effectsIncludePhaser, effectsIncludeInvertWave } from "./SynthConfig";
 import { Preset, EditorConfig } from "../editor/EditorConfig";
 import { scaleElementsByFactor, inverseRealFourierTransform } from "./FFT";
 import { Deque } from "./Deque";
@@ -701,7 +701,7 @@ export class Operator {
 export class CustomAlgorithm {
     public name: string = "";
     public carrierCount: number = 0;
-    public modulatedBy: number[][] = [[], [], [], [], [], []];
+    public modulatedBy: number[][] = [[], [], [], [], [], [], [], []];
     public associatedCarrier: number[] = [];
 
     constructor() {
@@ -712,15 +712,15 @@ export class CustomAlgorithm {
         this.reset();
         this.carrierCount = carriers;
         for (let i = 0; i < this.modulatedBy.length; i++) {
-            this.modulatedBy[i] = modulation[i];
+            this.modulatedBy[i] = Array.from(modulation[i] || []);
             if (i < carriers) {
                 this.associatedCarrier[i] = i + 1;
             }
             this.name += (i + 1);
-            for (let j = 0; j < modulation[i].length; j++) {
-                this.name += modulation[i][j];
-                if (modulation[i][j] > carriers - 1) {
-                    this.associatedCarrier[modulation[i][j] - 1] = i + 1;
+            for (let j = 0; j < this.modulatedBy[i].length; j++) {
+                this.name += this.modulatedBy[i][j];
+                if (this.modulatedBy[i][j] > carriers - 1) {
+                    this.associatedCarrier[this.modulatedBy[i][j] - 1] = i + 1;
                 }
                 this.name += ",";
             }
@@ -735,8 +735,8 @@ export class CustomAlgorithm {
     public reset(): void {
         this.name = ""
         this.carrierCount = 1;
-        this.modulatedBy = [[2, 3, 4, 5, 6], [], [], [], [], []];
-        this.associatedCarrier = [1, 1, 1, 1, 1, 1];
+        this.modulatedBy = [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []];
+        this.associatedCarrier = [1, 1, 1, 1, 1, 1, 1, 1];
     }
 
     public copy(other: CustomAlgorithm): void {
@@ -746,9 +746,9 @@ export class CustomAlgorithm {
         this.associatedCarrier = other.associatedCarrier;
     }
 
-    public fromPreset(other: number): void {
+    public fromPreset(other: number, type: InstrumentType = InstrumentType.fm6op): void {
         this.reset();
-        let preset = Config.algorithms6Op[other]
+        const preset = type == InstrumentType.fm8op ? Config.algorithms8Op[other] : Config.algorithms6Op[other];
         this.name = preset.name;
         this.carrierCount = preset.carrierCount;
         for (var i = 0; i < preset.modulatedBy.length; i++) {
@@ -760,7 +760,7 @@ export class CustomAlgorithm {
 
 export class CustomFeedBack { //feels redunant
     public name: string = "";
-    public indices: number[][] = [[], [], [], [], [], []];
+    public indices: number[][] = [[], [], [], [], [], [], [], []];
 
     constructor() {
         this.fromPreset(1);
@@ -769,9 +769,9 @@ export class CustomFeedBack { //feels redunant
     public set(inIndices: number[][]) {
         this.reset();
         for (let i = 0; i < this.indices.length; i++) {
-            this.indices[i] = inIndices[i];
-            for (let j = 0; j < inIndices[i].length; j++) {
-                this.name += inIndices[i][j];
+            this.indices[i] = Array.from(inIndices[i] || []);
+            for (let j = 0; j < this.indices[i].length; j++) {
+                this.name += this.indices[i][j];
                 this.name += ",";
             }
             this.name += ".";
@@ -781,7 +781,7 @@ export class CustomFeedBack { //feels redunant
     public reset(): void {
         this.reset;
         this.name = "";
-        this.indices = [[1], [], [], [], [], []];
+        this.indices = [[1], [], [], [], [], [], [], []];
     }
 
     public copy(other: CustomFeedBack): void {
@@ -789,9 +789,9 @@ export class CustomFeedBack { //feels redunant
         this.indices = other.indices;
     }
 
-    public fromPreset(other: number): void {
+    public fromPreset(other: number, type: InstrumentType = InstrumentType.fm6op): void {
         this.reset();
-        let preset = Config.feedbacks6Op[other]
+        const preset = type == InstrumentType.fm8op ? Config.feedbacks8Op[other] : Config.feedbacks6Op[other];
         for (var i = 0; i < preset.indices.length; i++) {
             this.indices[i] = Array.from(preset.indices[i]);
             for (let j = 0; j < preset.indices[i].length; j++) {
@@ -1735,7 +1735,7 @@ export class Instrument {
         }
 
         this.spectrumWave = new SpectrumWave(isNoiseChannel);
-        for (let i: number = 0; i < Config.operatorCount + 2; i++) {//hopefully won't break everything
+        for (let i: number = 0; i < Config.fm8opOperatorCount; i++) {
             this.operators[i] = new Operator(i);
         }
         for (let i: number = 0; i < Config.drumCount; i++) {
@@ -1884,6 +1884,7 @@ export class Instrument {
                 }
                 break;
             case InstrumentType.fm6op:
+            case InstrumentType.fm8op:
                 this.transition = 1;
                 this.vibrato = 0;
                 this.effects = 1;
@@ -1892,7 +1893,8 @@ export class Instrument {
                 this.feedbackType = 0;
                 this.algorithm6Op = 1;
                 this.feedbackType6Op = 1;
-                this.customAlgorithm.fromPreset(1);
+                this.customAlgorithm.fromPreset(1, type);
+                this.customFeedbackType.fromPreset(1, type);
                 this.feedbackAmplitude = 0;
                 for (let i: number = 0; i < this.operators.length; i++) {
                     this.operators[i].reset(i);
@@ -1989,11 +1991,11 @@ export class Instrument {
         const cutoffAtMax: boolean = (legacyCutoffSetting == legacyFilterCutoffRange - 1);
         if (cutoffAtMax && legacyFilterEnv.type == EnvelopeType.punch) legacyFilterEnv = Config.envelopes.dictionary["none"];
 
-        const carrierCount: number = Config.algorithms[this.algorithm].carrierCount;
+        const carrierCount: number = this.type == InstrumentType.fm ? Config.algorithms[this.algorithm].carrierCount : this.customAlgorithm.carrierCount;
         let noCarriersControlledByNoteSize: boolean = true;
         let allCarriersControlledByNoteSize: boolean = true;
         let noteSizeControlsSomethingElse: boolean = (legacyFilterEnv.type == EnvelopeType.noteSize) || (legacyPulseEnv.type == EnvelopeType.noteSize);
-        if (this.type == InstrumentType.fm || this.type == InstrumentType.fm6op) {
+        if (getFMOperatorCount(this.type) > 0) {
             noteSizeControlsSomethingElse = noteSizeControlsSomethingElse || (legacyFeedbackEnv.type == EnvelopeType.noteSize);
             for (let i: number = 0; i < legacyOperatorEnvelopes.length; i++) {
                 if (i < carrierCount) {
@@ -2010,7 +2012,7 @@ export class Instrument {
 
         this.envelopeCount = 0;
 
-        if (this.type == InstrumentType.fm || this.type == InstrumentType.fm6op) {
+        if (getFMOperatorCount(this.type) > 0) {
             if (allCarriersControlledByNoteSize && noteSizeControlsSomethingElse) {
                 this.addEnvelope(Config.instrumentAutomationTargets.dictionary["noteVolume"].index, 0, Config.envelopes.dictionary["note size"].index, false);
             } else if (noCarriersControlledByNoteSize && !noteSizeControlsSomethingElse) {
@@ -2301,9 +2303,10 @@ export class Instrument {
                 instrumentObject["unisonExpression"] = this.unisonExpression;
                 instrumentObject["unisonSign"] = this.unisonSign;
             }
-        } else if (this.type == InstrumentType.fm || this.type == InstrumentType.fm6op) {
+        } else if (getFMOperatorCount(this.type) > 0) {
             const operatorArray: Object[] = [];
-            for (const operator of this.operators) {
+            for (let i: number = 0; i < getFMOperatorCount(this.type); i++) {
+                const operator = this.operators[i];
                 operatorArray.push({
                     "frequency": Config.operatorFrequencies[operator.frequency].name,
                     "amplitude": operator.amplitude,
@@ -2317,18 +2320,20 @@ export class Instrument {
                 instrumentObject["feedbackAmplitude"] = this.feedbackAmplitude;
                 instrumentObject["operators"] = operatorArray;
             } else {
-                instrumentObject["algorithm"] = Config.algorithms6Op[this.algorithm6Op].name;
-                instrumentObject["feedbackType"] = Config.feedbacks6Op[this.feedbackType6Op].name;
+                const algorithms = this.type == InstrumentType.fm8op ? Config.algorithms8Op : Config.algorithms6Op;
+                const feedbacks = this.type == InstrumentType.fm8op ? Config.feedbacks8Op : Config.feedbacks6Op;
+                instrumentObject["algorithm"] = algorithms[this.algorithm6Op].name;
+                instrumentObject["feedbackType"] = feedbacks[this.feedbackType6Op].name;
                 instrumentObject["feedbackAmplitude"] = this.feedbackAmplitude;
                 if (this.algorithm6Op == 0) {
                     const customAlgorithm: any = {};
-                    customAlgorithm["mods"] = this.customAlgorithm.modulatedBy;
+                    customAlgorithm["mods"] = this.customAlgorithm.modulatedBy.slice(0, getFMOperatorCount(this.type));
                     customAlgorithm["carrierCount"] = this.customAlgorithm.carrierCount;
                     instrumentObject["customAlgorithm"] = customAlgorithm;
                 }
                 if (this.feedbackType6Op == 0) {
                     const customFeedback: any = {};
-                    customFeedback["mods"] = this.customFeedbackType.indices;
+                    customFeedback["mods"] = this.customFeedbackType.indices.slice(0, getFMOperatorCount(this.type));
                     instrumentObject["customFeedback"] = customFeedback;
                 }
 
@@ -2480,7 +2485,7 @@ export class Instrument {
                     this.chord = Config.chords.dictionary["strum"].index;
                 } else if (this.type == InstrumentType.chip) {
                     this.chord = Config.chords.dictionary["arpeggio"].index;
-                } else if (this.type == InstrumentType.fm || this.type == InstrumentType.fm6op) {
+                } else if (getFMOperatorCount(this.type) > 0) {
                     this.chord = Config.chords.dictionary["custom interval"].index;
                 } else {
                     this.chord = Config.chords.dictionary["simultaneous"].index;
@@ -2799,21 +2804,24 @@ export class Instrument {
             if (this.chipWave == -1) this.chipWave = 1;
         }
 
-        if (this.type == InstrumentType.fm || this.type == InstrumentType.fm6op) {
+        if (getFMOperatorCount(this.type) > 0) {
             if (this.type == InstrumentType.fm) {
                 this.algorithm = Config.algorithms.findIndex(algorithm => algorithm.name == instrumentObject["algorithm"]);
                 if (this.algorithm == -1) this.algorithm = 0;
                 this.feedbackType = Config.feedbacks.findIndex(feedback => feedback.name == instrumentObject["feedbackType"]);
                 if (this.feedbackType == -1) this.feedbackType = 0;
             } else {
-                this.algorithm6Op = Config.algorithms6Op.findIndex(algorithm6Op => algorithm6Op.name == instrumentObject["algorithm"]);
+                const algorithms = this.type == InstrumentType.fm8op ? Config.algorithms8Op : Config.algorithms6Op;
+                const feedbacks = this.type == InstrumentType.fm8op ? Config.feedbacks8Op : Config.feedbacks6Op;
+                this.algorithm6Op = algorithms.findIndex(algorithm6Op => algorithm6Op.name == instrumentObject["algorithm"]);
                 if (this.algorithm6Op == -1) this.algorithm6Op = 1;
                 if (this.algorithm6Op == 0) {
-                    this.customAlgorithm.set(instrumentObject["customAlgorithm"]["carrierCount"], instrumentObject["customAlgorithm"]["mods"]);
+                    const customAlgorithm = instrumentObject["customAlgorithm"] || {};
+                    this.customAlgorithm.set(customAlgorithm["carrierCount"] || 1, customAlgorithm["mods"] || []);
                 } else {
-                    this.customAlgorithm.fromPreset(this.algorithm6Op);
+                    this.customAlgorithm.fromPreset(this.algorithm6Op, this.type);
                 }
-                this.feedbackType6Op = Config.feedbacks6Op.findIndex(feedback6Op => feedback6Op.name == instrumentObject["feedbackType"]);
+                this.feedbackType6Op = feedbacks.findIndex(feedback6Op => feedback6Op.name == instrumentObject["feedbackType"]);
                 // SynthBox feedback support
                 if (this.feedbackType6Op == -1) {
                     // These are all of the SynthBox feedback presets that aren't present in Gold/UltraBox
@@ -2860,7 +2868,7 @@ export class Instrument {
                 if ((this.feedbackType6Op == 0) && (instrumentObject["customFeedback"] != undefined)) {
                     this.customFeedbackType.set(instrumentObject["customFeedback"]["mods"]);
                 } else {
-                    this.customFeedbackType.fromPreset(this.feedbackType6Op);
+                    this.customFeedbackType.fromPreset(this.feedbackType6Op, this.type);
                 }
             }
             if (instrumentObject["feedbackAmplitude"] != undefined) {
@@ -2869,7 +2877,7 @@ export class Instrument {
                 this.feedbackAmplitude = 0;
             }
 
-            for (let j: number = 0; j < Config.operatorCount + (this.type == InstrumentType.fm6op ? 2 : 0); j++) {
+            for (let j: number = 0; j < getFMOperatorCount(this.type); j++) {
                 const operator: Operator = this.operators[j];
                 let operatorObject: any = undefined;
                 if (instrumentObject["operators"] != undefined) operatorObject = instrumentObject["operators"][j];
@@ -3049,7 +3057,7 @@ export class Instrument {
                 legacySettings.feedbackEnvelope = getEnvelope(instrumentObject["feedbackEnvelope"]);
                 if (Array.isArray(instrumentObject["operators"])) {
                     legacySettings.operatorEnvelopes = [];
-                    for (let j: number = 0; j < Config.operatorCount + (this.type == InstrumentType.fm6op ? 2 : 0); j++) {
+                    for (let j: number = 0; j < getFMOperatorCount(this.type); j++) {
                         let envelope: Envelope | undefined;
                         if (instrumentObject["operators"][j] != undefined) {
                             envelope = getEnvelope(instrumentObject["operators"][j]["envelope"]);
@@ -3222,7 +3230,7 @@ export class Instrument {
             //}
         }
         if ((automationTarget.name == "operatorFrequency") || (automationTarget.name == "operatorAmplitude")) {
-            if (index >= 4 + (this.type == InstrumentType.fm6op ? 2 : 0)) return false;
+            if (index >= getFMOperatorCount(this.type)) return false;
         }
         return true;
     }
@@ -3947,7 +3955,7 @@ export class Song {
                     encode32BitNumber(buffer, instrument.chipWaveLoopEnd);
                     encode32BitNumber(buffer, instrument.chipWaveStartOffset);
 
-                } else if (instrument.type == InstrumentType.fm || instrument.type == InstrumentType.fm6op) {
+                } else if (getFMOperatorCount(instrument.type) > 0) {
                     if (instrument.type == InstrumentType.fm) {
                         buffer.push(SongTagCode.algorithm, base64IntToCharCode[instrument.algorithm]);
                         buffer.push(SongTagCode.feedbackType, base64IntToCharCode[instrument.feedbackType]);
@@ -3956,7 +3964,7 @@ export class Song {
                         if (instrument.algorithm6Op == 0) {
                             buffer.push(SongTagCode.chord, base64IntToCharCode[instrument.customAlgorithm.carrierCount]);
                             buffer.push(SongTagCode.effects);
-                            for (let o: number = 0; o < instrument.customAlgorithm.modulatedBy.length; o++) {
+                            for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                                 for (let j: number = 0; j < instrument.customAlgorithm.modulatedBy[o].length; j++) {
                                     buffer.push(base64IntToCharCode[instrument.customAlgorithm.modulatedBy[o][j]]);
                                 }
@@ -3967,7 +3975,7 @@ export class Song {
                         buffer.push(SongTagCode.feedbackType, base64IntToCharCode[instrument.feedbackType6Op]);
                         if (instrument.feedbackType6Op == 0) {
                             buffer.push(SongTagCode.effects);
-                            for (let o: number = 0; o < instrument.customFeedbackType.indices.length; o++) {
+                            for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                                 for (let j: number = 0; j < instrument.customFeedbackType.indices[o].length; j++) {
                                     buffer.push(base64IntToCharCode[instrument.customFeedbackType.indices[o][j]]);
                                 }
@@ -3979,15 +3987,15 @@ export class Song {
                     buffer.push(SongTagCode.feedbackAmplitude, base64IntToCharCode[instrument.feedbackAmplitude]);
 
                     buffer.push(SongTagCode.operatorFrequencies);
-                    for (let o: number = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                         buffer.push(base64IntToCharCode[instrument.operators[o].frequency]);
                     }
                     buffer.push(SongTagCode.operatorAmplitudes);
-                    for (let o: number = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                         buffer.push(base64IntToCharCode[instrument.operators[o].amplitude]);
                     }
                     buffer.push(SongTagCode.operatorWaves);
-                    for (let o: number = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                         buffer.push(base64IntToCharCode[instrument.operators[o].waveform]);
                         // Push pulse width if that type is used
                         if (instrument.operators[o].waveform == 2) {
@@ -5793,10 +5801,12 @@ export class Song {
                     instrument.algorithm = clamp(0, Config.algorithms.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                 }
                 else {
-                    instrument.algorithm6Op = clamp(0, Config.algorithms6Op.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
-                    instrument.customAlgorithm.fromPreset(instrument.algorithm6Op);
+                    const algorithms = instrument.type == InstrumentType.fm8op ? Config.algorithms8Op : Config.algorithms6Op;
+                    const operatorCount = getFMOperatorCount(instrument.type);
+                    instrument.algorithm6Op = clamp(0, algorithms.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                    instrument.customAlgorithm.fromPreset(instrument.algorithm6Op, instrument.type);
                     if (compressed.charCodeAt(charIndex) == SongTagCode.chord) {
-                        let carrierCountTemp = clamp(1, Config.operatorCount + 2 + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex + 1)]);
+                        let carrierCountTemp = clamp(1, operatorCount + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex + 1)]);
                         charIndex++
                         let tempModArray: number[][] = [];
                         if (compressed.charCodeAt(charIndex + 1) == SongTagCode.effects) {
@@ -5807,7 +5817,7 @@ export class Song {
                                 tempModArray[j] = [];
                                 let o: number = 0;
                                 while (compressed.charCodeAt(charIndex) != SongTagCode.operatorWaves) {
-                                    tempModArray[j][o] = clamp(1, Config.operatorCount + 3, base64CharCodeToInt[compressed.charCodeAt(charIndex)]);
+                                    tempModArray[j][o] = clamp(1, operatorCount + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex)]);
                                     o++
                                     charIndex++
                                 }
@@ -5865,8 +5875,10 @@ export class Song {
                     instrument.feedbackType = clamp(0, Config.feedbacks.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                 }
                 else {
-                    instrument.feedbackType6Op = clamp(0, Config.feedbacks6Op.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
-                    instrument.customFeedbackType.fromPreset(instrument.feedbackType6Op);
+                    const feedbacks = instrument.type == InstrumentType.fm8op ? Config.feedbacks8Op : Config.feedbacks6Op;
+                    const operatorCount = getFMOperatorCount(instrument.type);
+                    instrument.feedbackType6Op = clamp(0, feedbacks.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
+                    instrument.customFeedbackType.fromPreset(instrument.feedbackType6Op, instrument.type);
                     let tempModArray: number[][] = [];
                     if (compressed.charCodeAt(charIndex) == SongTagCode.effects) {
                         let j: number = 0;
@@ -5875,7 +5887,7 @@ export class Song {
                             tempModArray[j] = [];
                             let o: number = 0;
                             while (compressed.charCodeAt(charIndex) != SongTagCode.operatorWaves) {
-                                tempModArray[j][o] = clamp(1, Config.operatorCount + 2, base64CharCodeToInt[compressed.charCodeAt(charIndex)]);
+                                tempModArray[j][o] = clamp(1, operatorCount + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex)]);
                                 o++
                                 charIndex++
                             }
@@ -5910,27 +5922,27 @@ export class Song {
                 if (beforeThree && fromGoldBox) {
                     const freqToGold3 = [4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 20, 22, 24, 2, 1, 9, 17, 19, 21, 23, 0, 3];
 
-                    for (let o = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o = 0; o < getFMOperatorCount(instrument.type); o++) {
                         instrument.operators[o].frequency = freqToGold3[clamp(0, freqToGold3.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
                     }
                 }
                 else if (!fromGoldBox && !fromUltraBox && !fromSlarmoosBox && !fromJukeBox) {
                     const freqToUltraBox = [4, 5, 6, 7, 8, 10, 12, 13, 14, 15, 16, 18, 20, 23, 27, 2, 1, 9, 17, 19, 21, 23, 0, 3];
 
-                    for (let o = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o = 0; o < getFMOperatorCount(instrument.type); o++) {
                         instrument.operators[o].frequency = freqToUltraBox[clamp(0, freqToUltraBox.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
                     }
 
                 }
                 else {
-                    for (let o = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o = 0; o < getFMOperatorCount(instrument.type); o++) {
                         instrument.operators[o].frequency = clamp(0, Config.operatorFrequencies.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                     }
                 }
             } break;
             case SongTagCode.operatorAmplitudes: {
                 const instrument: Instrument = this.channels[instrumentChannelIterator].instruments[instrumentIndexIterator];
-                for (let o: number = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                     instrument.operators[o].amplitude = clamp(0, Config.operatorAmplitudeMax + 1, base64CharCodeToInt[compressed.charCodeAt(charIndex++)]);
                 }
             } break;
@@ -5942,7 +5954,7 @@ export class Song {
                 if ((beforeNine && fromBeepBox) || (beforeFive && fromJummBox) || (beforeFour && fromGoldBox)) {
                     const legacySettings: LegacySettings = legacySettingsCache![instrumentChannelIterator][instrumentIndexIterator];
                     legacySettings.operatorEnvelopes = [];
-                    for (let o: number = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                         let aa: number = base64CharCodeToInt[compressed.charCodeAt(charIndex++)];
                         if ((beforeTwo && fromGoldBox) || (fromBeepBox)) aa = pregoldToEnvelope[aa];
                         if (fromJummBox) aa = jummToUltraEnvelope[aa];
@@ -6086,7 +6098,7 @@ export class Song {
                         instrument.operators[o].waveform = pre3To3g[old];
                     }
                 } else {
-                    for (let o: number = 0; o < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); o++) {
+                    for (let o: number = 0; o < getFMOperatorCount(instrument.type); o++) {
                         if (fromJummBox) {
                             const jummToG = [0, 1, 3, 2, 4, 5];
                             instrument.operators[o].waveform = jummToG[clamp(0, Config.operatorWaves.length, base64CharCodeToInt[compressed.charCodeAt(charIndex++)])];
@@ -10022,11 +10034,14 @@ export class Synth {
                 const tgtInstrument: Instrument | null = tgtInstrumentList[i];
                 if (tgtInstrument == null) continue;
                 const str: string = Config.modulators[instrument.modulators[mod]].name;
+                const fmOperatorCount: number = getFMOperatorCount(tgtInstrument.type);
+                const fmSliderMatch: RegExpExecArray | null = /^fm slider (\d+)$/.exec(str);
+                const fmSliderNumber: number = fmSliderMatch == null ? 0 : parseInt(fmSliderMatch[1]);
                 // Check effects
                 if (!((Config.modulators[instrument.modulators[mod]].associatedEffect != EffectType.length && !(tgtInstrument.effects & (1 << Config.modulators[instrument.modulators[mod]].associatedEffect)))
                     // Instrument type specific
-                    || ((tgtInstrument.type != InstrumentType.fm && tgtInstrument.type != InstrumentType.fm6op) && (str == "fm slider 1" || str == "fm slider 2" || str == "fm slider 3" || str == "fm slider 4" || str == "fm feedback"))
-                    || tgtInstrument.type != InstrumentType.fm6op && (str == "fm slider 5" || str == "fm slider 6")
+                    || (fmSliderNumber > fmOperatorCount)
+                    || (str == "fm feedback" && fmOperatorCount == 0)
                     || ((tgtInstrument.type != InstrumentType.pwm && tgtInstrument.type != InstrumentType.supersaw) && (str == "pulse width" || str == "decimal offset"))
                     || ((tgtInstrument.type != InstrumentType.supersaw) && (str == "dynamism" || str == "spread" || str == "saw shape"))
                     // Arp check
@@ -12183,7 +12198,7 @@ export class Synth {
             baseExpression = Config.noiseBaseExpression;
             expressionReferencePitch = basePitch;
             pitchDamping = Config.chipNoises[instrument.chipNoise].isSoft ? 24.0 : 60.0;
-        } else if (instrument.type == InstrumentType.fm || instrument.type == InstrumentType.fm6op) {
+        } else if (getFMOperatorCount(instrument.type) > 0) {
             baseExpression = Config.fmBaseExpression;
         } else if (instrument.type == InstrumentType.chip) {
             baseExpression = Config.chipBaseExpression;
@@ -12251,7 +12266,7 @@ export class Synth {
         }
         tone.expression = 0.0;
         tone.expressionDelta = 0.0;
-        for (let i: number = 0; i < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); i++) {
+        for (let i: number = 0; i < getFMOperatorCount(instrument.type); i++) {
             tone.operatorWaves[i] = Synth.getOperatorWave(instrument.operators[i].waveform, instrument.operators[i].pulseWidth);
         }
 
@@ -12612,7 +12627,7 @@ export class Synth {
 
         noteFilterExpression = Math.min(3.0, noteFilterExpression);
 
-        if (instrument.type == InstrumentType.fm || instrument.type == InstrumentType.fm6op) {
+        if (getFMOperatorCount(instrument.type) > 0) {
             // phase modulation!
 
             let sineExpressionBoost: number = 1.0;
@@ -12627,10 +12642,10 @@ export class Synth {
             }
 
 
-            const carrierCount: number = (instrument.type == InstrumentType.fm6op ? instrument.customAlgorithm.carrierCount : Config.algorithms[instrument.algorithm].carrierCount);
-            for (let i: number = 0; i < (instrument.type == InstrumentType.fm6op ? 6 : Config.operatorCount); i++) {
+            const carrierCount: number = (instrument.type == InstrumentType.fm ? Config.algorithms[instrument.algorithm].carrierCount : instrument.customAlgorithm.carrierCount);
+            for (let i: number = 0; i < getFMOperatorCount(instrument.type); i++) {
 
-                const associatedCarrierIndex: number = (instrument.type == InstrumentType.fm6op ? instrument.customAlgorithm.associatedCarrier[i] - 1 : Config.algorithms[instrument.algorithm].associatedCarrier[i] - 1);
+                const associatedCarrierIndex: number = (instrument.type == InstrumentType.fm ? Config.algorithms[instrument.algorithm].associatedCarrier[i] - 1 : instrument.customAlgorithm.associatedCarrier[i] - 1);
                 const pitch: number = tone.pitches[arpeggiates ? 0 : isMono ? instrument.monoChordTone : ((i < tone.pitchCount) ? i : ((associatedCarrierIndex < tone.pitchCount) ? associatedCarrierIndex : 0))];
                 const freqMult = Config.operatorFrequencies[instrument.operators[i].frequency].mult;
                 const interval = Config.operatorCarrierInterval[associatedCarrierIndex] + arpeggioInterval;
@@ -13230,8 +13245,9 @@ export class Synth {
             return Synth.drumsetSynth;
         } else if (instrument.type == InstrumentType.mod) {
             return Synth.modSynth;
-        } else if (instrument.type == InstrumentType.fm6op) {
-            const fingerprint: string = instrument.customAlgorithm.name + "_" + instrument.customFeedbackType.name;
+        } else if (instrument.type == InstrumentType.fm6op || instrument.type == InstrumentType.fm8op) {
+            const operatorCount: number = getFMOperatorCount(instrument.type);
+            const fingerprint: string = operatorCount + "_" + instrument.customAlgorithm.name + "_" + instrument.customFeedbackType.name;
             if (Synth.fm6SynthFunctionCache[fingerprint] == undefined) {
                 const synthSource: string[] = [];
 
@@ -13243,7 +13259,7 @@ export class Synth {
                         }
                         synthSource.push(line.replace("/*operator#Scaled*/", outputs.join(" + ")));
                     } else if (line.indexOf("// INSERT OPERATOR COMPUTATION HERE") != -1) {
-                        for (let j: number = Config.operatorCount + 2 - 1; j >= 0; j--) {
+                        for (let j: number = operatorCount - 1; j >= 0; j--) {
                             for (const operatorLine of Synth.operatorSourceTemplate) {
                                 if (operatorLine.indexOf("/* + operator@Scaled*/") != -1) {
                                     let modulators = "";
@@ -13267,7 +13283,7 @@ export class Synth {
                             }
                         }
                     } else if (line.indexOf("#") != -1) {
-                        for (let j = 0; j < Config.operatorCount + 2; j++) {
+                        for (let j = 0; j < operatorCount; j++) {
                             synthSource.push(line.replace(/\#/g, j + ""));
                         }
                     } else {

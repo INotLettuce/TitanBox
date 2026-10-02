@@ -210,12 +210,23 @@
             
             <p id="introduction">
                 TitanBox is an expanded BeepBox-family music editor, bringing together features from across the mod community. <br>
-            <!-- <p>
-                All song data is contained in the URL at the top of your browser.
-                When you make changes to the song, the URL is updated to reflect your changes.
-                When you are satisfied with your song, just copy and paste the URL to save and share your song!
-            </p> -->
-    <div class="donation">
+            </p>
+            <section>
+                <h2>Cross-Mod Feature Highlights</h2>
+                <p>
+                    TitanBox aims to carry over the most useful upgrades from other BeepBox mods and modernize them into one toolkit.
+                </p>
+                <ul>
+                    <li><b>Expanded instruments:</b> richer preset variety, deeper randomization, and more mod-friendly instrument controls.</li>
+                    <li><b>More synthesis power:</b> custom chip editing, FM-style experimentation, filter tuning, and envelope control.</li>
+                    <li><b>Improved pattern workflow:</b> selection tools, copy/paste, duplication, channel editing, and quick bar management.</li>
+                    <li><b>Theme and visual customization:</b> flexible editor styling, custom themes, and layout tweaks.</li>
+                    <li><b>Song sharing and compatibility:</b> URL-based saving, custom saving flows, import/export support, and player shortcuts.</li>
+                    <li><b>Community tools:</b> preset tagging, modded preset browsing, manual links, Discord/community resources, and shared mod features.</li>
+                    <li><b>Quality-of-life editing:</b> expanded keybinds, loop controls, playhead movement, and faster production workflows.</li>
+                </ul>
+            </section>
+            <div class="donation">
         BeepBox is a passion project, and will always be free to use. If you find it valuable and have the means, please feel free to show your gratitude to the original creator of Beepbox here: 
         <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
             <input type="hidden" name="cmd" value="_donations" />
@@ -261,7 +272,12 @@
                             <li><b>X</b>: cut pattern</li>
                             <li><b>+/-</b>: move notes up or down</li>
                             <li><b>Shift & +/-</b>: move notes up or down one octave</li>
-                            <li><b>Shift + Drag</b>: Selects notes or patterns</li>
+                            <li><b>Shift + Drag</b>: selects notes or patterns</li>
+                            <li><b>Ctrl/Cmd + S</b>: save or copy the current song URL</li>
+                            <li><b>Ctrl/Cmd + O</b>: open/import song data</li>
+                            <li><b>Ctrl/Cmd + Shift + C</b>: copy the current song URL</li>
+                            <li><b>Ctrl/Cmd + Shift + U</b>: shorten the current song URL</li>
+                            <li><b>Ctrl/Cmd + Shift + P</b>: open the song player</li>
                             
                         </ul>
                         <h3>Patterns, Channels, and Bars</h3>
@@ -326,7 +342,19 @@
                         <ul>
                             <li><b>Shift ~</b>: new blank song</li>
                             <li><b>Shift P</b>: open song player</li>
-                            <li><b>Shift U</b>: shorten song url</li>
+                            <li><b>Shift U</b>: shorten song URL</li>
+                            <li><b>Alt + Enter</b>: add an instrument within the current channel</li>
+                            <li><b>Alt + Backspace</b>: delete the selected instrument within the current channel</li>
+                            <li><b>Alt + R</b>: generate a random instrument while preserving the current type</li>
+                            <li><b>Ctrl/Cmd + Shift + T</b>: open the theme selector</li>
+                            <li><b>Ctrl/Cmd + Alt + Shift + T</b>: open the custom theme editor</li>
+                            <li><b>Ctrl/Cmd + Shift + S</b>: share the current song URL</li>
+                            <li><b>Ctrl/Cmd + Shift + B</b>: open beat settings</li>
+                            <li><b>Ctrl/Cmd + Shift + N</b>: start a new blank song</li>
+                            <li><b>Ctrl/Cmd + Alt + I</b>: copy an HTML embed code</li>
+                            <li><b>Ctrl/Cmd + Shift + L</b>: open layout settings</li>
+                            <li><b>Shift + Click</b>: multi-select notes or patterns for faster editing</li>
+                            <li><b>Ctrl/Cmd + Shift + E</b>: return to the editor from the player</li>
                         </ul>
                     <!--
                     <p>For the complete list of keybinds, check the <a onclick="window.open('https://beepbox.miraheze.org/wiki/Keybinds')">BeepBox Wiki</a> for more info.</p>
@@ -480,9 +508,9 @@
         "1.0.0", // I wonder how many times I'll forget about this
         //JukeBox
         "(did someone say presets?)", //0.2.1
-        "Since 1889", "Since 7/30/2010", /**"and not ShoeBox", **/ "No Escape", "and C A G F motif", //0.2.2
-        "[insert funny joke]", "at least 3 presets", "Neoff Orange", "WOWZERS", "46% serious", //0.2.3
-        "NOW IN 2D!!!", ":3", "eeheehee", "99.98% Survival Rate!", "extra sodium!", ":3 (but louder)", "explodes" //1.0.0
+        "car go brrrr", "q", /**"and not ShoeBox", **/ "I eat paper", "Made on a school chromebook", //0.2.2
+        "[insert Weezer riff]", "at least 1 instrument", "I like turtles", "F# G# F# G# F# E C# B at 121 BPM", "Im feeling lucky", //0.2.3
+        "NOW IN 2.5D!!!", "(*^*)", "I put a weezer riff somewhere", "I wish i was good at creating music", "extra calsium!", "implodes" //1.0.0
         ];
         const date = new Date();
         if (Math.floor(Math.random() * 0) == 0) { // plants always show up now

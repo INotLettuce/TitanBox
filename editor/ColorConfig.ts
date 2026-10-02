@@ -14,9 +14,26 @@ export interface ChannelColors extends BeepBoxOption {
 export class ColorConfig {
     public static colorLookup: Map<number, ChannelColors> = new Map<number, ChannelColors>();
 	public static usesColorFormula: boolean = false;
-	public static readonly defaultTheme: string = "violet verdant";
+	public static readonly defaultTheme: string = "TitanBox";
     public static readonly themes: { [name: string]: string } = {
 	"dark classic": ``,
+        "TitanBox": `
+			:root {
+				--page-margin: #16191c;
+				--editor-background: #16191c;
+				--mod-title: #00f0ff;
+				--primary-text: #f5f5f7;
+				--secondary-text: #708090;
+				--ui-widget-background: #252b30;
+				--ui-widget-focus: #00f0ff;
+				--pitch-background: #252b30;
+				--hover-preview: #00f0ff;
+				--playhead: #00f0ff;
+				--loop-accent: #00f0ff;
+				--link-accent: #00f0ff;
+				--text-selection: rgba(0, 240, 255, 0.35);
+			}
+		`,
         "dark competition": `
 				:root {
 					--hover-preview: #ddd;

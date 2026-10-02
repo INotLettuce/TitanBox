@@ -5,11 +5,11 @@
     <link rel='shortcut icon' type='image/x-icon' href='./website/favicon.ico' />
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Slarmoo's Box</title>
-    <meta name="application-name" content="Slarmoo's Box" />
-    <meta name="apple-mobile-web-app-title" content="Slarmoo's Box">
+    <title>TitanBox</title>
+    <meta name="application-name" content="TitanBox" />
+    <meta name="apple-mobile-web-app-title" content="TitanBox">
     <meta name="description"
-        content="Slarmoo's Box is a mod of Ultrabox that aims to advance Beepbox's capabilities." />
+        content="TitanBox is a BeepBox-family music editor with expanded synthesis and composition features." />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="keywords" content="chiptune, instrumental, music, song, melody, composition, tool, free, online, square wave, NES, NSF, slarmoosbox, ultrabox, beepbox, jummbox, pandorasbox, modbox, sandbox, goldbox, wackybox, todbox, slarmoo, slarmoos" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -23,11 +23,7 @@
 </head>
 <body>
     <script>
-        window.location.href = "./website/" + removeURL(window.location.href);
-
-        function removeURL(string) {
-                return string.replace(/https?:\/\/[\w\.\:\/]*/, ""); // remove first instance of url
-        }
+        window.location.replace("./website/" + window.location.search + window.location.hash);
     </script>
 </body>
     

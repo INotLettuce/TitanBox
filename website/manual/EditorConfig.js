@@ -32,7 +32,7 @@ var EditorConfig = (function (exports) {
         });
     };
     var _a;
-    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "supersaw", "chip (custom)", "mod", "FM (6-op)"];
+    const TypePresets = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "pulse width", "picked string", "supersaw", "chip (custom)", "mod", "FM (6-op)", "FM (8-op)"];
     class SampleLoadEvents extends EventTarget {
         constructor() {
             super();
@@ -234,8 +234,8 @@ var EditorConfig = (function (exports) {
         { name: "÷12", stepsPerBeat: 12, roundUpThresholds: null },
         { name: "freehand (÷24)", stepsPerBeat: 24, roundUpThresholds: null },
     ]);
-    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "supersaw", "custom chip", "mod", "FM6op"];
-    Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false, false];
+    Config.instrumentTypeNames = ["chip", "FM", "noise", "spectrum", "drumset", "harmonics", "PWM", "Picked String", "supersaw", "custom chip", "mod", "FM6op", "FM8op"];
+    Config.instrumentTypeHasSpecialInterval = [true, true, false, false, false, true, false, false, false, false, false, false, false];
     Config.chipBaseExpression = 0.03375;
     Config.fmBaseExpression = 0.03;
     Config.noiseBaseExpression = 0.19;
@@ -485,8 +485,9 @@ var EditorConfig = (function (exports) {
         { name: "monophonic", customInterval: false, arpeggiates: false, strumParts: 0, singleTone: true }
     ]);
     Config.maxChordSize = 9;
+    Config.fm8opOperatorCount = 8;
     Config.operatorCount = 4;
-    Config.maxPitchOrOperatorCount = Math.max(_a.maxChordSize, _a.operatorCount + 2);
+    Config.maxPitchOrOperatorCount = Math.max(_a.maxChordSize, _a.fm8opOperatorCount);
     Config.algorithms = toNameMap([
         { name: "1←(2 3 4)", carrierCount: 1, associatedCarrier: [1, 1, 1, 1], modulatedBy: [[2, 3, 4], [], [], []] },
         { name: "1←(2 3←4)", carrierCount: 1, associatedCarrier: [1, 1, 1, 1], modulatedBy: [[2, 3], [], [4], []] },
@@ -540,7 +541,14 @@ var EditorConfig = (function (exports) {
         { name: "1←4(2←5(3←6", carrierCount: 3, associatedCarrier: [1, 2, 3, 1, 2, 3], modulatedBy: [[2, 3, 4], [3, 5], [6], [], [], []] },
         { name: "1←4(2←5 3←6", carrierCount: 3, associatedCarrier: [1, 2, 3, 1, 2, 3], modulatedBy: [[2, 3, 4], [5], [6], [], [], []] },
     ]);
-    Config.operatorCarrierInterval = [0.0, 0.04, -0.073, 0.091, 0.061, 0.024];
+    Config.algorithms8Op = toNameMap([
+        { name: "Custom", carrierCount: 1, associatedCarrier: [1, 1, 1, 1, 1, 1, 1, 1], modulatedBy: [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []] },
+        { name: "1←2←3←4←5←6←7←8", carrierCount: 1, associatedCarrier: [1, 1, 1, 1, 1, 1, 1, 1], modulatedBy: [[2], [3], [4], [5], [6], [7], [8], []] },
+        { name: "1←(2 3 4 5 6 7 8)", carrierCount: 1, associatedCarrier: [1, 1, 1, 1, 1, 1, 1, 1], modulatedBy: [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []] },
+        { name: "1 2 3 4←(5 6 7 8)", carrierCount: 4, associatedCarrier: [1, 2, 3, 4, 1, 2, 3, 4], modulatedBy: [[], [], [], [], [5, 6, 7, 8], [], [], []] },
+        { name: "1 2 3 4 5 6 7 8", carrierCount: 8, associatedCarrier: [1, 2, 3, 4, 5, 6, 7, 8], modulatedBy: [[], [], [], [], [], [], [], []] },
+    ]);
+    Config.operatorCarrierInterval = [0.0, 0.04, -0.073, 0.091, 0.061, 0.024, 0.0, 0.0];
     Config.operatorAmplitudeMax = 15;
     Config.operatorFrequencies = toNameMap([
         { name: "0.12×", mult: 0.125, hzOffset: 0.0, amplitudeSign: 1.0 },
@@ -724,6 +732,13 @@ var EditorConfig = (function (exports) {
         { name: "(1,2,3,4,5)→6", indices: [[], [], [], [], [], [1, 2, 3, 4, 5]] },
         { name: "ALL", indices: [[1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6], [1, 2, 3, 4, 5, 6]] },
     ]);
+    Config.feedbacks8Op = toNameMap([
+        { name: "Custom", indices: [[2, 3, 4, 5, 6, 7, 8], [], [], [], [], [], [], []] },
+        { name: "1↻ 2↻ 3↻ 4↻ 5↻ 6↻ 7↻ 8↻", indices: [[1], [2], [3], [4], [5], [6], [7], [8]] },
+        { name: "1→2→3→4→5→6→7→8", indices: [[], [1], [2], [3], [4], [5], [6], [7]] },
+        { name: "1↔2 3↔4 5↔6 7↔8", indices: [[2], [1], [4], [3], [6], [5], [8], [7]] },
+        { name: "ALL", indices: [[1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8], [1, 2, 3, 4, 5, 6, 7, 8]] },
+    ]);
     Config.chipNoiseLength = 1 << 15;
     Config.spectrumNoiseLength = 1 << 15;
     Config.spectrumBasePitch = 24;
@@ -867,38 +882,38 @@ var EditorConfig = (function (exports) {
         { name: "noteVolume", computeIndex: 0, displayName: "note volume", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: null },
         { name: "pulseWidth", computeIndex: 2, displayName: "pulse width", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
         { name: "stringSustain", computeIndex: 3, displayName: "sustain", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [7] },
-        { name: "unison", computeIndex: 4, displayName: "unison", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9, 6, 2, 3, 4, 1, 11] },
-        { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", perNote: true, interleave: true, isFilter: false, maxCount: _a.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
-        { name: "operatorAmplitude", computeIndex: 11, displayName: "fm# volume", perNote: true, interleave: false, isFilter: false, maxCount: _a.operatorCount + 2, effect: null, compatibleInstruments: [1, 11] },
-        { name: "feedbackAmplitude", computeIndex: 17, displayName: "fm feedback", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 11] },
-        { name: "pitchShift", computeIndex: 18, displayName: "pitch shift", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: 7, compatibleInstruments: null },
-        { name: "detune", computeIndex: 19, displayName: "detune", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: 8, compatibleInstruments: null },
-        { name: "vibratoDepth", computeIndex: 20, displayName: "vibrato depth", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: 9, compatibleInstruments: null },
+        { name: "unison", computeIndex: 4, displayName: "unison", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [0, 5, 7, 9, 6, 2, 3, 4, 1, 11, 12] },
+        { name: "operatorFrequency", computeIndex: 5, displayName: "fm# freq", perNote: true, interleave: true, isFilter: false, maxCount: _a.fm8opOperatorCount, effect: null, compatibleInstruments: [1, 11, 12] },
+        { name: "operatorAmplitude", computeIndex: 13, displayName: "fm# volume", perNote: true, interleave: false, isFilter: false, maxCount: _a.fm8opOperatorCount, effect: null, compatibleInstruments: [1, 11, 12] },
+        { name: "feedbackAmplitude", computeIndex: 21, displayName: "fm feedback", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [1, 11, 12] },
+        { name: "pitchShift", computeIndex: 22, displayName: "pitch shift", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: 7, compatibleInstruments: null },
+        { name: "detune", computeIndex: 23, displayName: "detune", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: 8, compatibleInstruments: null },
+        { name: "vibratoDepth", computeIndex: 24, displayName: "vibrato depth", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: 9, compatibleInstruments: null },
         { name: "noteFilterAllFreqs", computeIndex: 1, displayName: "n. filter freqs", perNote: true, interleave: false, isFilter: true, maxCount: 1, effect: 5, compatibleInstruments: null },
-        { name: "noteFilterFreq", computeIndex: 21, displayName: "n. filter # freq", perNote: true, interleave: false, isFilter: true, maxCount: _a.filterMaxPoints, effect: 5, compatibleInstruments: null },
-        { name: "decimalOffset", computeIndex: 37, displayName: "decimal offset", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
-        { name: "supersawDynamism", computeIndex: 38, displayName: "dynamism", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
-        { name: "supersawSpread", computeIndex: 39, displayName: "spread", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
-        { name: "supersawShape", computeIndex: 40, displayName: "saw↔pulse", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
-        { name: "panning", computeIndex: 41, displayName: "panning", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 2, compatibleInstruments: null },
-        { name: "distortion", computeIndex: 42, displayName: "distortion", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 3, compatibleInstruments: null },
-        { name: "bitcrusherQuantization", computeIndex: 43, displayName: "bitcrush", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 4, compatibleInstruments: null },
-        { name: "bitcrusherFrequency", computeIndex: 44, displayName: "freq crush", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 4, compatibleInstruments: null },
-        { name: "chorus", computeIndex: 45, displayName: "chorus", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 1, compatibleInstruments: null },
-        { name: "echoSustain", computeIndex: 46, displayName: "echo", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 6, compatibleInstruments: null },
-        { name: "reverb", computeIndex: 47, displayName: "reverb", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 0, compatibleInstruments: null },
-        { name: "arpeggioSpeed", computeIndex: 48, displayName: "arpeggio speed", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 11, compatibleInstruments: null },
-        { name: "ringModulation", computeIndex: 49, displayName: "ring mod", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 13, compatibleInstruments: null },
-        { name: "ringModulationHz", computeIndex: 50, displayName: "ring mod hz", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 13, compatibleInstruments: null },
-        { name: "granular", computeIndex: 51, displayName: "granular", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
-        { name: "grainFreq", computeIndex: 52, displayName: "grain freq", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
-        { name: "grainSize", computeIndex: 53, displayName: "grain size", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
-        { name: "grainRange", computeIndex: 54, displayName: "grain range", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
-        { name: "echoDelay", computeIndex: 55, displayName: "echo delay", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 6, compatibleInstruments: null },
-        { name: "phaserFreq", computeIndex: 56, displayName: "phaser freq", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
-        { name: "phaserMix", computeIndex: 57, displayName: "phaser", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
-        { name: "phaserFeedback", computeIndex: 58, displayName: "phaser feedback", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
-        { name: "phaserStages", computeIndex: 59, displayName: "phaser stages", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
+        { name: "noteFilterFreq", computeIndex: 25, displayName: "n. filter # freq", perNote: true, interleave: false, isFilter: true, maxCount: _a.filterMaxPoints, effect: 5, compatibleInstruments: null },
+        { name: "decimalOffset", computeIndex: 41, displayName: "decimal offset", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [6, 8] },
+        { name: "supersawDynamism", computeIndex: 42, displayName: "dynamism", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "supersawSpread", computeIndex: 43, displayName: "spread", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "supersawShape", computeIndex: 44, displayName: "saw↔pulse", perNote: true, interleave: false, isFilter: false, maxCount: 1, effect: null, compatibleInstruments: [8] },
+        { name: "panning", computeIndex: 45, displayName: "panning", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 2, compatibleInstruments: null },
+        { name: "distortion", computeIndex: 46, displayName: "distortion", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 3, compatibleInstruments: null },
+        { name: "bitcrusherQuantization", computeIndex: 47, displayName: "bitcrush", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 4, compatibleInstruments: null },
+        { name: "bitcrusherFrequency", computeIndex: 48, displayName: "freq crush", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 4, compatibleInstruments: null },
+        { name: "chorus", computeIndex: 49, displayName: "chorus", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 1, compatibleInstruments: null },
+        { name: "echoSustain", computeIndex: 50, displayName: "echo", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 6, compatibleInstruments: null },
+        { name: "reverb", computeIndex: 51, displayName: "reverb", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 0, compatibleInstruments: null },
+        { name: "arpeggioSpeed", computeIndex: 52, displayName: "arpeggio speed", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 11, compatibleInstruments: null },
+        { name: "ringModulation", computeIndex: 53, displayName: "ring mod", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 13, compatibleInstruments: null },
+        { name: "ringModulationHz", computeIndex: 54, displayName: "ring mod hz", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 13, compatibleInstruments: null },
+        { name: "granular", computeIndex: 55, displayName: "granular", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
+        { name: "grainFreq", computeIndex: 56, displayName: "grain freq", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
+        { name: "grainSize", computeIndex: 57, displayName: "grain size", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
+        { name: "grainRange", computeIndex: 58, displayName: "grain range", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 14, compatibleInstruments: null },
+        { name: "echoDelay", computeIndex: 59, displayName: "echo delay", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 6, compatibleInstruments: null },
+        { name: "phaserFreq", computeIndex: 60, displayName: "phaser freq", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
+        { name: "phaserMix", computeIndex: 61, displayName: "phaser", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
+        { name: "phaserFeedback", computeIndex: 62, displayName: "phaser feedback", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
+        { name: "phaserStages", computeIndex: 63, displayName: "phaser stages", perNote: false, interleave: false, isFilter: false, maxCount: 1, effect: 15, compatibleInstruments: null },
     ]);
     Config.operatorWaves = toNameMap([
         { name: "sine", samples: _a.sineWave },
@@ -1296,7 +1311,7 @@ var EditorConfig = (function (exports) {
     }
 
     const fullTagList = [
-        "chip", "chipwave", "customchip", "fm", "fm4op", "fm6op", "pwm", "supersaw", "pickedstring", "harmonics", "spectrum", "noise", "drumset",
+        "chip", "chipwave", "customchip", "fm", "fm4op", "fm6op", "fm8op", "pwm", "supersaw", "pickedstring", "harmonics", "spectrum", "noise", "drumset",
         "featured", "novelty",
         "retro", "keys", "idiophone", "guitar", "picked", "distortion", "bellows", "string", "vocal", "brass", "reed", "flute", "pad",
         "drum", "kick", "snare", "hihat",
@@ -1305,7 +1320,7 @@ var EditorConfig = (function (exports) {
         "spendog", "somethingoriginal", "eggfry", "august", "treethletress", "synthetic", "sup3r", "rblx_inst", "jayden256", "kawkawguy", "ex1",
         "ashiiware", "jacobar475", "formskooooo", "dragoncoder047",
         "ubf33", "luxian", "piglinmiguel", "maliciousmandwald", "yupekosi", "xelerate_xd",
-        "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "41box", "jukebox",
+        "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "px", "jukebox",
         "pre1.0.0", "1.0.0",
     ];
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent);
@@ -1354,7 +1369,7 @@ var EditorConfig = (function (exports) {
         }
     }
     EditorConfig.version = "1.0.0b";
-    EditorConfig.versionDisplayName = "JukeBox " + EditorConfig.version;
+    EditorConfig.versionDisplayName = "TitanBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
     EditorConfig.ctrlSymbol = EditorConfig.isOnMac ? "⌘" : "Ctrl+";
@@ -1373,6 +1388,7 @@ var EditorConfig = (function (exports) {
                 { id: 8, name: TypePresets[8], customType: 8 },
                 { id: 9, name: TypePresets[9], customType: 9 },
                 { id: 10, name: TypePresets[11], customType: 11 },
+                { id: 11, name: TypePresets[12], customType: 12 },
             ])
         },
         {
