@@ -92,15 +92,6 @@
             flex: 0 0 auto;
         }
 
-        .splash-text {
-            min-height: 1.3em;
-            margin: -0.25em 0 1em;
-            color: var(--link-accent, #00f0ff);
-            font-size: 0.85em;
-            font-style: italic;
-            text-align: center;
-        }
-
         h2 {
             font-size: 1.5rem;
             text-align: center;
@@ -216,17 +207,6 @@
                 <span id="goldboxPlant" style="display: inline; color:#62a13b"></span>
                 <!-- <span id="goldboxPlant" style="display: inline; color: var(--plant-color, var(--link-accent, #62a13b));"></span> -->
             </h1>
-            <p id="splashText" class="splash-text">Make noise. Keep the good parts.</p>
-            <script>
-                const splashes = [
-                    "Make noise. Keep the good parts.",
-                    "Small waves, big ideas.",
-                    "Your next loop starts here.",
-                    "One more take. Then one more.",
-                    "Turn tiny bleeps into big feelings.",
-                ];
-                document.getElementById("splashText").textContent = splashes[Math.floor(Math.random() * splashes.length)];
-            </script>
             
             <p id="introduction">
                 TitanBox is an expanded BeepBox-family music editor, bringing together features from across the mod community. <br>
