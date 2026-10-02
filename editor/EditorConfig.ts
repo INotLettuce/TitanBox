@@ -74,7 +74,6 @@ export class EditorConfig {
                 { id:8, name: TypePresets[InstrumentType.supersaw], customType: InstrumentType.supersaw },
                 { id:9, name: TypePresets[InstrumentType.customChipWave], customType: InstrumentType.customChipWave },
                 { id:10, name: TypePresets[InstrumentType.fm6op], customType: InstrumentType.fm6op },
-                { id:11, name: TypePresets[InstrumentType.fm8op], customType: InstrumentType.fm8op },
             ])
         },
         {
