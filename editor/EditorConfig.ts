@@ -36,7 +36,7 @@ export const fullTagList: string[] = [
     
     , "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "px", "jukebox"
 
-    , "pre1.0.0", "1.0.0",
+    , "pre1.0.0", "1.0.0", "1.0.1",
 ];
 
 export const isMobile: boolean = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent);
@@ -46,7 +46,7 @@ export function prettyNumber(value: number): string {
 }
 
 export class EditorConfig {
-    public static readonly version: string = "1.0.0b"; // Currently using patch versions in display (unlike JB)
+    public static readonly version: string = "1.0.0"; // Official stable release tag for TitanBox 1.0
     public static readonly versionDisplayName: string = "TitanBox " + EditorConfig.version;
 
     public static readonly releaseNotesURL: string = "./patch_notes.html";

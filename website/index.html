@@ -214,16 +214,8 @@
             <section>
                 <h2>Cross-Mod Feature Highlights</h2>
                 <p>
-                    TitanBox aims to carry over the most useful upgrades from other BeepBox mods and modernize them into one toolkit.
+                    TitanBox aims to do what ultrabox failed to do, combine all fetures from all mods
                 </p>
-                <ul>
-                    <li><b>Expanded instruments:</b> richer preset variety, deeper randomization, and more mod-friendly instrument controls.</li>
-                    <li><b>More synthesis power:</b> custom chip editing, FM-style experimentation, filter tuning, and envelope control.</li>
-                    <li><b>Improved pattern workflow:</b> selection tools, copy/paste, duplication, channel editing, and quick bar management.</li>
-                    <li><b>Theme and visual customization:</b> flexible editor styling, custom themes, and layout tweaks.</li>
-                    <li><b>Song sharing and compatibility:</b> URL-based saving, custom saving flows, import/export support, and player shortcuts.</li>
-                    <li><b>Community tools:</b> preset tagging, modded preset browsing, manual links, Discord/community resources, and shared mod features.</li>
-                    <li><b>Quality-of-life editing:</b> expanded keybinds, loop controls, playhead movement, and faster production workflows.</li>
                 </ul>
             </section>
             <div class="donation">
@@ -273,11 +265,11 @@
                             <li><b>+/-</b>: move notes up or down</li>
                             <li><b>Shift & +/-</b>: move notes up or down one octave</li>
                             <li><b>Shift + Drag</b>: selects notes or patterns</li>
-                            <li><b>Ctrl/Cmd + S</b>: save or copy the current song URL</li>
+                            <li><b>Ctrl/Cmd + S</b>: open export options</li>
                             <li><b>Ctrl/Cmd + O</b>: open/import song data</li>
-                            <li><b>Ctrl/Cmd + Shift + C</b>: copy the current song URL</li>
-                            <li><b>Ctrl/Cmd + Shift + U</b>: shorten the current song URL</li>
-                            <li><b>Ctrl/Cmd + Shift + P</b>: open the song player</li>
+                            <li><b>Ctrl/Cmd + Shift + C</b>: share or copy the current song URL</li>
+                            <li><b>Shift + U</b>: shorten the current song URL</li>
+                            <li><b>Shift + P</b>: open the song player</li>
                             
                         </ul>
                         <h3>Patterns, Channels, and Bars</h3>
@@ -292,7 +284,7 @@
                             <li><b>Enter</b>: add a new bar after currently selected one</li>
                             <li><b>Shift Enter</b>: add a new bar before currently selected one</li>
                             <li><b>Backspace</b>: delete currently selected bar</li>
-                            <li><b>Ctrl Enter</b>: add channel</li>
+                            <li><b>Ctrl/Cmd + Enter</b>: add channel</li>
                             <li><b>Ctrl Backspace</b>: delete currently selected channel</li>
                             <li><b>Ctrl & Arrows</b>: move selected channel up or down</li>
                             
@@ -313,8 +305,8 @@
                         </ul>
                         <h3>Instruments</h3>
                         <ul>
-                            <li><b>Shift C</b>: copy instrument settings</li>
-                            <li><b>Shift C</b>: paste instrument settings</li>
+                            <li><b>Shift + C</b>: copy instrument settings</li>
+                            <li><b>Shift + V</b>: paste instrument settings</li>
                             <li><b>R</b>: select random preset</li>
                             <li><b>Shift R</b>: generate random instrument</li>
                             <li><b>Alt R</b>: generate random instrument with same type</li>
@@ -341,12 +333,10 @@
                         <h3>Miscellaneous</h3>
                         <ul>
                             <li><b>Shift ~</b>: new blank song</li>
-                            <li><b>Shift P</b>: open song player</li>
-                            <li><b>Shift U</b>: shorten song URL</li>
+                            <li><b>Shift + U</b>: shorten song URL</li>
                             <li><b>Alt + Enter</b>: add an instrument within the current channel</li>
                             <li><b>Alt + Backspace</b>: delete the selected instrument within the current channel</li>
                             <li><b>Alt + R</b>: generate a random instrument while preserving the current type</li>
-                            <li><b>Ctrl/Cmd + Shift + T</b>: open the theme selector</li>
                             <li><b>Ctrl/Cmd + Alt + Shift + T</b>: open the custom theme editor</li>
                             <li><b>Ctrl/Cmd + Shift + S</b>: share the current song URL</li>
                             <li><b>Ctrl/Cmd + Shift + B</b>: open beat settings</li>
@@ -354,7 +344,7 @@
                             <li><b>Ctrl/Cmd + Alt + I</b>: copy an HTML embed code</li>
                             <li><b>Ctrl/Cmd + Shift + L</b>: open layout settings</li>
                             <li><b>Shift + Click</b>: multi-select notes or patterns for faster editing</li>
-                            <li><b>Ctrl/Cmd + Shift + E</b>: return to the editor from the player</li>
+                            <li><b>Shift + E or Shift + P</b>: return to the editor from the player</li>
                         </ul>
                     <!--
                     <p>For the complete list of keybinds, check the <a onclick="window.open('https://beepbox.miraheze.org/wiki/Keybinds')">BeepBox Wiki</a> for more info.</p>
@@ -392,7 +382,7 @@
                         </ul>
                         <h3>TitanBox Version Tags:</h3>
                         <ul>
-                            pre1.0.0, 1.0.0
+                            pre1.0.0, 1.0.0, 1.0.1
                         </ul>
                         <h3>Community Tags:</h3>
                         <p>These tags are for users with 10 or more non-novelty presets:</p>
@@ -509,8 +499,8 @@
         //JukeBox
         "(did someone say presets?)", //0.2.1
         "car go brrrr", "q", /**"and not ShoeBox", **/ "I eat paper", "Made on a school chromebook", //0.2.2
-        "[insert Weezer riff]", "at least 1 instrument", "I like turtles", "F# G# F# G# F# E C# B at 121 BPM", "Im feeling lucky", //0.2.3
-        "NOW IN 2.5D!!!", "(*^*)", "I put a weezer riff somewhere", "I wish i was good at creating music", "extra calsium!", "implodes" //1.0.0
+        "[insert Weezer riff]", "at least 1 instrument", "I like turtles", "boopbox", "Im feeling lucky", //0.2.3
+        "NOW IN 2.5D!!!", "(*^*)", "I put a weezer riff somewhere", "Im not felling lucky :(", "extra calsium!", "implodes" //1.0.0
         ];
         const date = new Date();
         if (Math.floor(Math.random() * 0) == 0) { // plants always show up now

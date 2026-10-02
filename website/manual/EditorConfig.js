@@ -1321,7 +1321,7 @@ var EditorConfig = (function (exports) {
         "ashiiware", "jacobar475", "formskooooo", "dragoncoder047",
         "ubf33", "luxian", "piglinmiguel", "maliciousmandwald", "yupekosi", "xelerate_xd",
         "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "px", "jukebox",
-        "pre1.0.0", "1.0.0",
+        "pre1.0.0", "1.0.0", "1.0.1",
     ];
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent);
     function prettyNumber(value) {
@@ -1368,7 +1368,7 @@ var EditorConfig = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.0.0b";
+    EditorConfig.version = "1.0.0";
     EditorConfig.versionDisplayName = "TitanBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);

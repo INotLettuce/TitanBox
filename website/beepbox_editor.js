@@ -1971,7 +1971,7 @@ var beepbox = (function (exports) {
         "ashiiware", "jacobar475", "formskooooo", "dragoncoder047",
         "ubf33", "luxian", "piglinmiguel", "maliciousmandwald", "yupekosi", "xelerate_xd",
         "beepbox", "jummbox", "ultrabox", "sandbox", "midbox", "abyssbox", "awesomebox", "bulbbox", "slarmoosbox", "unbox", "px", "jukebox",
-        "pre1.0.0", "1.0.0",
+        "pre1.0.0", "1.0.0", "1.0.1",
     ];
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|android|ipad|playbook|silk/i.test(navigator.userAgent);
     function prettyNumber(value) {
@@ -2018,7 +2018,7 @@ var beepbox = (function (exports) {
             return (_a = EditorConfig.presetCategories[0].presets.dictionary) === null || _a === void 0 ? void 0 : _a[TypePresets === null || TypePresets === void 0 ? void 0 : TypePresets[instrument]];
         }
     }
-    EditorConfig.version = "1.0.0b";
+    EditorConfig.version = "1.0.0";
     EditorConfig.versionDisplayName = "TitanBox " + EditorConfig.version;
     EditorConfig.releaseNotesURL = "./patch_notes.html";
     EditorConfig.isOnMac = /^Mac/i.test(navigator.platform) || /Mac OS X/i.test(navigator.userAgent) || /^(iPhone|iPad|iPod)/i.test(navigator.platform) || /(iPhone|iPad|iPod)/i.test(navigator.userAgent);
@@ -51487,7 +51487,7 @@ You should be redirected to the song at:<br /><br />
             this._volumeBarBox = div({ class: "playback-volume-bar", style: "height: 12px; align-self: center;" }, this._volumeBarContainer);
             this._fileMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "File"), option({ value: "new" }, "+ New Blank Song (⇧`)"), option({ value: "import" }, "↑ Import Song... (" + EditorConfig.ctrlSymbol + "O)"), option({ value: "export" }, "↓ Export Song... (" + EditorConfig.ctrlSymbol + "S)"), option({ value: "copyUrl" }, "⎘ Copy Song URL"), option({ value: "shareUrl" }, "⇪ Share Song..."), option({ value: "configureShortener" }, "🛠 Customize Url Shortener..."), option({ value: "shortenUrl" }, "… Shorten Song URL (⇧U)"), option({ value: "viewPlayer" }, "▶ View in Song Player (⇧P)"), option({ value: "copyEmbed" }, "⎘ Copy HTML Embed Code"), option({ value: "songRecovery" }, "⚠ Recover Recent Song... (`)"));
             this._editMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Edit"), option({ value: "undo" }, "Undo (Z)"), option({ value: "redo" }, "Redo (Y)"), option({ value: "copy" }, "Copy Pattern (C)"), option({ value: "pasteNotes" }, "Paste Pattern Notes (V)"), option({ value: "pasteNumbers" }, "Paste Pattern Numbers (" + EditorConfig.ctrlSymbol + "⇧V)"), option({ value: "insertBars" }, "Insert Bar (⏎)"), option({ value: "deleteBars" }, "Delete Selected Bars (⌫)"), option({ value: "insertChannel" }, "Insert Channel (" + EditorConfig.ctrlSymbol + "⏎)"), option({ value: "deleteChannel" }, "Delete Selected Channels (" + EditorConfig.ctrlSymbol + "⌫)"), option({ value: "selectChannel" }, "Select Channel (⇧A)"), option({ value: "selectAll" }, "Select All (A)"), option({ value: "duplicatePatterns" }, "Duplicate Reused Patterns (D)"), option({ value: "transposeUp" }, "Move Notes Up (+ or ⇧+)"), option({ value: "transposeDown" }, "Move Notes Down (- or ⇧-)"), option({ value: "moveNotesSideways" }, "Move All Notes Sideways... (W)"), option({ value: "generateEuclideanRhythm" }, "Generate Euclidean Rhythm... (" + EditorConfig.ctrlSymbol + "E)"), option({ value: "beatsPerBar" }, "Change Beats Per Bar... (⇧B)"), option({ value: "barCount" }, "Change Song Length... (L)"), option({ value: "channelSettings" }, "Channel Settings... (Q)"), option({ value: "limiterSettings" }, "Limiter Settings... (⇧L)"), option({ value: "addExternal" }, "Add Custom Samples... (⇧Q)"));
-            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), optgroup({ label: "Technical" }, option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Auto Follow Playhead"), option({ value: "enableNotePreview" }, "Hear Added Notes"), option({ value: "notesOutsideScale" }, "Place Notes Out of Scale"), option({ value: "setDefaultScale" }, "Set Current Scale as Default"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "instrumentCopyPaste" }, "Enable Copy/Paste Buttons"), option({ value: "enableTagSearch" }, "Enable Tag Search"), option({ value: "instrumentImportExport" }, "Enable Import/Export Buttons"), option({ value: "displayBrowserUrl" }, "Enable Song Data in URL"), option({ value: "pressControlForShortcuts" }, "Require Ctrl/Cmd for Shortcuts"), option({ value: "enableMidi" }, "Enable MIDI Performance"), option({ value: "showRecordButton" }, "Show Record Button"), option({ value: "snapRecordedNotesToRhythm" }, "Snap Recorded Notes to Rhythm"), option({ value: "ignorePerformedNotesNotInScale" }, "Ignore Notes Outside Scale"), option({ value: "metronomeCountIn" }, "Metronome Count-In"), option({ value: "metronomeWhileRecording" }, "Metronome While Recording"), option({ value: "closePromptByClickoff" }, "Close Prompts on Click Off"), option({ value: "rollNoveltyPresets" }, "Can Randomly Select Novelty Presets"), option({ value: "recordingSetup" }, "Note Recording...")), optgroup({ label: "Appearance" }, option({ value: "showFifth" }, 'Highlight "Fifth" Note'), option({ value: "notesFlashWhenPlayed" }, "Notes Flash When Played (DogeBox2)"), option({ value: "instrumentButtonsAtTop" }, "Instrument Buttons at Top"), option({ value: "frostedGlassBackground" }, "Frosted Glass Prompt Backdrop"), option({ value: "showChannels" }, "Show All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "showInstrumentScrollbars" }, "Show Intsrument Scrollbars"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "showDescription" }, "Show Description"), option({ value: "layout" }, "Set Layout..."), option({ value: "colorTheme" }, "Set Theme..."), option({ value: "customTheme" }, "Custom Theme...")));
+            this._optionsMenu = select({ style: "width: 100%;" }, option({ selected: true, disabled: true, hidden: false }, "Preferences"), optgroup({ label: "Technical" }, option({ value: "autoPlay" }, "Auto Play on Load"), option({ value: "autoFollow" }, "Auto Follow Playhead"), option({ value: "enableNotePreview" }, "Hear Added Notes"), option({ value: "notesOutsideScale" }, "Place Notes Out of Scale"), option({ value: "setDefaultScale" }, "Set Current Scale as Default"), option({ value: "alwaysFineNoteVol" }, "Always Fine Note Volume"), option({ value: "enableChannelMuting" }, "Enable Channel Muting"), option({ value: "instrumentCopyPaste" }, "Enable Copy/Paste Buttons"), option({ value: "enableTagSearch" }, "Enable Tag Search"), option({ value: "instrumentImportExport" }, "Enable Import/Export Buttons"), option({ value: "displayBrowserUrl" }, "Enable Song Data in URL"), option({ value: "pressControlForShortcuts" }, "Require Ctrl/Cmd for Shortcuts"), option({ value: "enableMidi" }, "Enable MIDI Performance"), option({ value: "showRecordButton" }, "Show Record Button"), option({ value: "snapRecordedNotesToRhythm" }, "Snap Recorded Notes to Rhythm"), option({ value: "ignorePerformedNotesNotInScale" }, "Ignore Notes Outside Scale"), option({ value: "metronomeCountIn" }, "Metronome Count-In"), option({ value: "metronomeWhileRecording" }, "Metronome While Recording"), option({ value: "closePromptByClickoff" }, "Close Prompts on Click Off"), option({ value: "rollNoveltyPresets" }, "Can Randomly Select Novelty Presets"), option({ value: "recordingSetup" }, "Keyboard & Recording Setup...")), optgroup({ label: "Appearance" }, option({ value: "showFifth" }, 'Highlight "Fifth" Note'), option({ value: "notesFlashWhenPlayed" }, "Notes Flash When Played (DogeBox2)"), option({ value: "instrumentButtonsAtTop" }, "Instrument Buttons at Top"), option({ value: "frostedGlassBackground" }, "Frosted Glass Prompt Backdrop"), option({ value: "showChannels" }, "Show All Channels"), option({ value: "showScrollBar" }, "Show Octave Scroll Bar"), option({ value: "showInstrumentScrollbars" }, "Show Intsrument Scrollbars"), option({ value: "showLetters" }, "Show Piano Keys"), option({ value: "displayVolumeBar" }, "Show Playback Volume"), option({ value: "showOscilloscope" }, "Show Oscilloscope"), option({ value: "showSampleLoadingStatus" }, "Show Sample Loading Status"), option({ value: "showDescription" }, "Show Description"), option({ value: "layout" }, "Set Layout..."), option({ value: "colorTheme" }, "Set Theme..."), option({ value: "customTheme" }, "Custom Theme...")));
             this._scaleSelect = buildOptions(select(), Config.scales.map(scale => scale.name));
             this._keySelect = buildOptions(select(), Config.keys.map(key => key.name).reverse());
             this._octaveStepper = input({ style: "width: 59.5%;", type: "number", min: Config.octaveMin, max: Config.octaveMax, value: "0" });
@@ -51922,9 +51922,16 @@ You should be redirected to the song at:<br /><br />
                     (prefs.enableTagSearch ? textOnIcon : textOffIcon) + "Enable Tag Search",
                     (prefs.instrumentImportExport ? textOnIcon : textOffIcon) + "Enable Import/Export Buttons",
                     (prefs.displayBrowserUrl ? textOnIcon : textOffIcon) + "Enable Song Data in URL",
+                    (prefs.pressControlForShortcuts ? textOnIcon : textOffIcon) + "Require Ctrl/Cmd for Shortcuts",
+                    (prefs.enableMidi ? textOnIcon : textOffIcon) + "Enable MIDI Performance",
+                    (prefs.showRecordButton ? textOnIcon : textOffIcon) + "Show Record Button",
+                    (prefs.snapRecordedNotesToRhythm ? textOnIcon : textOffIcon) + "Snap Recorded Notes to Rhythm",
+                    (prefs.ignorePerformedNotesNotInScale ? textOnIcon : textOffIcon) + "Ignore Notes Outside Scale",
+                    (prefs.metronomeCountIn ? textOnIcon : textOffIcon) + "Metronome Count-In",
+                    (prefs.metronomeWhileRecording ? textOnIcon : textOffIcon) + "Metronome While Recording",
                     (prefs.closePromptByClickoff ? textOnIcon : textOffIcon) + "Close Prompts on Click Off",
                     (prefs.rollNoveltyPresets ? textOnIcon : textOffIcon) + "Can Randomly Select Novelty Presets",
-                    textSpacingIcon + "Note Recording...",
+                    textSpacingIcon + "Keyboard & Recording Setup...",
                     textSpacingIcon + "Appearance",
                     (prefs.showFifth ? textOnIcon : textOffIcon) + 'Highlight "Fifth" Note',
                     (prefs.notesFlashWhenPlayed ? textOnIcon : textOffIcon) + "Notes Flash When Played (Dogebox2)",
@@ -53616,7 +53623,7 @@ You should be redirected to the song at:<br /><br />
                             this.envelopeEditor.rerenderExtraSettings();
                             event.preventDefault();
                         }
-                        else if (event.ctrlKey) {
+                        else if (event.ctrlKey || event.metaKey) {
                             this._openPrompt("generateEuclideanRhythm");
                             event.preventDefault();
                             break;
@@ -53759,7 +53766,7 @@ You should be redirected to the song at:<br /><br />
                                 this._openPrompt("customNoteFilterSettings");
                             break;
                         }
-                        else if (event.ctrlKey) {
+                        else if (event.ctrlKey || event.metaKey) {
                             let nextEmpty = 0;
                             while (nextEmpty < this.doc.song.patternsPerChannel && this.doc.song.channels[this.doc.channel].patterns[nextEmpty].notes.length > 0)
                                 nextEmpty++;

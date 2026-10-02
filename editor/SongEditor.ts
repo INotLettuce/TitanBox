@@ -857,7 +857,7 @@ export class SongEditor {
             option({ value: "metronomeWhileRecording" }, "Metronome While Recording"),
             option({ value: "closePromptByClickoff" }, "Close Prompts on Click Off"),
             option({ value: "rollNoveltyPresets" }, "Can Randomly Select Novelty Presets"),
-            option({ value: "recordingSetup" }, "Note Recording..."),
+            option({ value: "recordingSetup" }, "Keyboard & Recording Setup..."),
         ), 
         optgroup({ label: "Appearance" },
             option({ value: "showFifth" }, 'Highlight "Fifth" Note'),
@@ -2515,9 +2515,16 @@ export class SongEditor {
             (prefs.enableTagSearch ? textOnIcon : textOffIcon) + "Enable Tag Search",
             (prefs.instrumentImportExport ? textOnIcon : textOffIcon) + "Enable Import/Export Buttons",
             (prefs.displayBrowserUrl ? textOnIcon : textOffIcon) + "Enable Song Data in URL", //comment for testing
+            (prefs.pressControlForShortcuts ? textOnIcon : textOffIcon) + "Require Ctrl/Cmd for Shortcuts",
+            (prefs.enableMidi ? textOnIcon : textOffIcon) + "Enable MIDI Performance",
+            (prefs.showRecordButton ? textOnIcon : textOffIcon) + "Show Record Button",
+            (prefs.snapRecordedNotesToRhythm ? textOnIcon : textOffIcon) + "Snap Recorded Notes to Rhythm",
+            (prefs.ignorePerformedNotesNotInScale ? textOnIcon : textOffIcon) + "Ignore Notes Outside Scale",
+            (prefs.metronomeCountIn ? textOnIcon : textOffIcon) + "Metronome Count-In",
+            (prefs.metronomeWhileRecording ? textOnIcon : textOffIcon) + "Metronome While Recording",
             (prefs.closePromptByClickoff ? textOnIcon : textOffIcon) + "Close Prompts on Click Off",
             (prefs.rollNoveltyPresets ? textOnIcon : textOffIcon) + "Can Randomly Select Novelty Presets",
-            textSpacingIcon + "Note Recording...",
+            textSpacingIcon + "Keyboard & Recording Setup...",
             textSpacingIcon + "Appearance",
             (prefs.showFifth ? textOnIcon : textOffIcon) + 'Highlight "Fifth" Note',
             (prefs.notesFlashWhenPlayed ? textOnIcon : textOffIcon) + "Notes Flash When Played (Dogebox2)",
@@ -4593,7 +4600,7 @@ export class SongEditor {
                     }
                     this.envelopeEditor.rerenderExtraSettings();
                     event.preventDefault();
-                } else if (event.ctrlKey) {
+                } else if (event.ctrlKey || event.metaKey) {
                     // EUCLEDIAN RHYTHM SHORTCUT (E)
                     this._openPrompt("generateEuclideanRhythm");
                     event.preventDefault();
@@ -4743,7 +4750,7 @@ export class SongEditor {
                         this._openPrompt("customNoteFilterSettings");
                     break;
                 }
-                else if (event.ctrlKey) {
+                else if (event.ctrlKey || event.metaKey) {
                     let nextEmpty: number = 0;
                     while (nextEmpty < this.doc.song.patternsPerChannel && this.doc.song.channels[this.doc.channel].patterns[nextEmpty].notes.length > 0)
                         nextEmpty++;
