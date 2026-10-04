@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" type="image/svg+xml" href="./titanbox-mark.svg" />
+    <!-- CDN for jQuery and select2 -->
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.7/js/select2.min.js"></script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TitanBox</title>
+    <meta name="description" content="TitanBox - A powerful, feature-rich mega-mod fork of BeepBox and JukeBox for creating advanced chiptune music.">
+<meta name="keywords" content="TitanBox, titan box, beepbox mod, jukebox mod, ultrabox fork, chiptune music maker, beepbox mega mod">
+<meta name="author" content="Your Name">
+    <meta name="application-name" content="TitanBox" />
+    <meta name="apple-mobile-web-app-title" content="TitanBox">
+    <meta name="description" content="TitanBox is a BeepBox-family music editor with expanded synthesis and composition features." />
+    <meta name="keywords" content="TitanBox, chiptune, instrumental, music, song, melody, composition, tool, free, online, square wave, NES, NSF, ultrabox, beepbox, jummbox, pandorasbox, modbox, sandbox, goldbox, wackybox, todbox, slarmoo's box" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="theme-color" content="#16191c" />
+    <meta name="msapplication-TileColor" content="#16191c" />
+    <meta name="msapplication-config" content="/browserconfig.xml" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta property="og:image" content="./titanbox-mark.svg" />
+    <link rel="apple-touch-icon" href="./titanbox-mark.svg" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link href="https://fonts.googleapis.com/css?family=B612" rel="stylesheet" media="none" onload="if (this.media != 'all') this.media='all';" /> <!-- this is a trick to load CSS asynchronously. -->
+    <style type="text/css">
+
+        html {
+            background: var(--page-margin, black);
+            overflow-x: hidden;
+            font-size: large;
+            font-family: 'B612', sans-serif;
+            line-height: 1.3;
+            color: var(--primary-text, white);
+        }
+
+        body {
+            margin: auto;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            align-content: center;
+        }
+
+        #beepboxEditorContainer {
+            min-height: 645px;
+            overflow: auto;
+            background: var(--editor-background, black);
+            width: 100%;
+			max-width: 710px;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        #text-content {
+            overflow: auto;
+            background: var(--editor-background, black);
+            width: 100%;
+			max-width: 710px;
+            padding-left: 30px;
+            padding-right: 30px;
+        }
+
+        #Hotdog { display: none; }
+
+        h1 {
+            font-size: 1.7rem;
+            text-align: center;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            -webkit-text-stroke-width: 0;
+            color: var(--mod-title, #8C5D49);
+        }
+
+        .title-lockup {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.45em;
+        }
+
+        .title-mark {
+            width: 1.1em;
+            height: 1.1em;
+            flex: 0 0 auto;
+        }
+
+        .site-version {
+            margin: -0.25em 0 0.75em;
+            color: var(--secondary-text, #708090);
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .project-links {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            width: min(100% - 32px, 520px);
+            margin: 20px auto 8px;
+        }
+
+        .project-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            min-height: 64px;
+            padding: 10px 16px;
+            border: 1px solid #49443f;
+            border-radius: 8px;
+            background: #171717;
+            color: #f5eee8;
+            text-decoration: none;
+            transition: background-color 140ms ease, border-color 140ms ease, transform 140ms ease;
+        }
+
+        .project-link:hover {
+            background: #24211e;
+            border-color: #a98268;
+            transform: translateY(-2px);
+        }
+
+        .project-link:focus-visible {
+            outline: 2px solid #d6a27d;
+            outline-offset: 3px;
+        }
+
+        .project-link img {
+            width: 28px;
+            height: 28px;
+            object-fit: contain;
+            flex: 0 0 auto;
+        }
+
+        .project-credit {
+            margin: 0 0 20px;
+            color: #aaa;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            -webkit-text-stroke-width: 0;
+        }
+
+        summary {
+            font-size: 1.5rem;
+            text-align: center;
+            margin-top: 0.5em;
+            margin-bottom: 0.5em;
+            -webkit-text-stroke-width: 0;
+        }
+
+        .centerDiv {
+			margin: 0px auto;
+		}
+
+        a {
+            color: var(--link-accent, #98f);
+            text-decoration: underline;
+        }
+
+        .donation form {
+            display: inline;
+        }
+
+        .donation input[type="submit"] {
+            appearance: none;
+            -webkit-appearance: none;
+            background: none;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+            color: var(--link-accent, #98f);
+            text-decoration: underline;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        } 
+
+        /* wide screen */
+		@media (min-width: 711px) {
+            html {
+                width: 100%;
+            }
+
+            body {
+                width: 100%;
+            }
+
+            .column-container {
+				width: 710px;
+                display: flex;
+				gap: 25px;
+            }
+
+            .instructions-column {
+				min-width: 0;
+            }
+
+            .bsky-column {
+				width: 300px;
+				flex-shrink: 0;
+			}
+        }
+
+        /* narrow screen */
+		@media (max-width: 710px) {
+            body {
+                width: 100%;
+            }
+
+            p, .donation {
+                margin: 1em 0.5em;
+            }
+
+            .column-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .project-links {
+                grid-template-columns: 1fr;
+            }
+
+        }
+    </style>
+</head>
+<body id="secondImage">
+    <script>
+        const image = localStorage.getItem('customTheme2');
+        const el  = document.getElementById('secondImage');
+        if (image != null && image !== "null" && image !== "undefined") {
+            el.style.backgroundImage="url(" + image + ")";
+            el.style.backgroundRepeat= "repeat";
+        }
+    </script>
+    <div id="beepboxEditorContainer">
+        <noscript>
+            Sorry, TitanBox requires a JavaScript-enabled browser.
+        </noscript>
+    </div>
+    <div id="text-content">
+        <section>
+
+            <h1 class="title-lockup">
+                <svg class="title-mark" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                    <rect x="2" y="2" width="28" height="6" rx="1" fill="#708090" />
+                    <rect x="12" y="10" width="8" height="4" fill="#00f0ff" />
+                    <rect x="10" y="16" width="12" height="4" fill="#708090" />
+                    <rect x="14" y="22" width="4" height="8" fill="#00f0ff" />
+                </svg>
+                <font>TitanBox</font>
+                <span id="goldboxPlant" style="display: inline; color:#62a13b"></span>
+                <!-- <span id="goldboxPlant" style="display: inline; color: var(--plant-color, var(--link-accent, #62a13b));"></span> -->
+            </h1>
+            <p class="site-version">Version 1.0.2</p>
+            
+            <p id="introduction">
+                TitanBox is a JukeBox mod with 8-op FM and features from across the BeepBox mod family.
+            </p>
+            <div class="donation">
+        TitanBox is free. To support the projects behind it, you can donate to BeepBox creator John Nesky:
+        <form action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_blank">
+            <input type="hidden" name="cmd" value="_donations" />
+            <input type="hidden" name="business" value="QZJTX9GRYEV9N" />
+            <input type="hidden" name="currency_code" value="USD" />
+            <input type="submit" name="submit" value="Paypal"/>
+        </form>
+        <br><br>
+        You can also donate to Slarmoo, who created Slarmoo's Box:
+        <form action="https://www.paypal.com/donate/?hosted_button_id=BMLD7HPKFR6NG" method="post" target="_blank">
+            <input type="submit" name="submit" value="Paypal" />
+        </form>
+        <br><br>
+                <section>
+                    <h2>
+                        About
+                    </h2>
+                    <p>
+                        InotLettuce maintains TitanBox. It builds on work by CoolTasDude and the creators of Slarmoo's Box, UltraBox, Pandora's Box, GoldBox, JummBox, and BeepBox.
+                    </p>
+                    <p>
+                        Songs you create are yours. TitanBox does not claim rights to them.
+                    </p>
+                    <p>
+                        Songs are stored in the URL after the # mark and played in your browser. TitanBox's servers do not receive or store them. Make sure you have permission to use any material you add.
+                    </p>
+                    <p>
+                        TitanBox does not collect or share your data.
+                    </p>
+                </section>
+                <section>
+                    <details>
+                        <summary>Keybinds List:</summary>
+                        <p>If you are new to BeepMods, know that the first 3 sections have the most important keybinds.</p>
+                        <h3>General</h3>
+                        <ul>
+                            <li><b>Spacebar</b>: play or pause the song</li>
+                            <li><b>Shift Spacebar</b>: play from mouse location</li>
+                            <li><b>Z</b>: undo</li>
+                            <li><b>Y or Shift Z</b>: redo</li>
+                            <li><b>C</b>: copy pattern from selection</li>
+                            <li><b>V</b>: paste pattern into selection</li>
+                            <li><b>X</b>: cut pattern</li>
+                            <li><b>+/-</b>: move notes up or down</li>
+                            <li><b>Shift & +/-</b>: move notes up or down one octave</li>
+                            <li><b>Shift + Drag</b>: selects notes or patterns</li>
+                            <li><b>Ctrl/Cmd + S</b>: open export options</li>
+                            <li><b>Ctrl/Cmd + O</b>: open/import song data</li>
+                            <li><b>Ctrl/Cmd + Shift + C</b>: share or copy the current song URL</li>
+                            <li><b>Shift + U</b>: shorten the current song URL</li>
+                            <li><b>Shift + P</b>: open the song player</li>
+                            
+                        </ul>
+                        <h3>Patterns, Channels, and Bars</h3>
+                        <ul>
+                            <li><b>0-9</b>: assign pattern number to selection</li>
+                            <li><b>Arrows</b>: move selection</li>
+                            <li><b>D</b>: duplicate a pattern</li>
+                            <li><b>N</b>: create a new blank pattern</li>
+                            <li><b>Delete</b>: clear pattern data</li>
+                            <li><b>A</b>: select entire song</li>
+                            <li><b>Shift A</b>: select current channel</li>
+                            <li><b>Enter</b>: add a new bar after currently selected one</li>
+                            <li><b>Shift Enter</b>: add a new bar before currently selected one</li>
+                            <li><b>Backspace</b>: delete currently selected bar</li>
+                            <li><b>Ctrl/Cmd + Enter</b>: add channel</li>
+                            <li><b>Ctrl Backspace</b>: delete currently selected channel</li>
+                            <li><b>Ctrl & Arrows</b>: move selected channel up or down</li>
+                            
+                        </ul>
+                        <h3>Channel Muting:</h3>
+                        <ul>
+                            <li><b>M</b> (or shift S): Mute/unmute a channel</li>
+                            <li><b>S</b>: Solo/unsolo a channel</li>
+                            <li><b>Shift M</b>: Mute/unmute entire song</li>
+                        </ul>
+                        <h3>Playhead</h3>
+                        <ul>
+                            <li><b>[ ]</b>: move playhead backward or forward one bar</li>
+                            <li><b>F</b>: move playhead to start</li>
+                            <li><b>Shift F</b>: move to start of loop</li>
+                            <li><b>H</b>: move playhead to highlighted pattern</li>
+                            <li><b>B</b>: loop selected bars</li>
+                        </ul>
+                        <h3>Instruments</h3>
+                        <ul>
+                            <li><b>Shift + C</b>: copy instrument settings</li>
+                            <li><b>Shift + V</b>: paste instrument settings</li>
+                            <li><b>R</b>: select random preset</li>
+                            <li><b>Shift R</b>: generate random instrument</li>
+                            <li><b>Alt R</b>: generate random instrument with same type</li>
+                            <li><b>T</b>: select next preset</li> 
+                            <li><b>Alt E</b>: open/close all envelope dropdowns</li>
+                            <li><b>Alt F</b>: open/close all fm dropdowns</li>
+                        </ul>
+                        <h3>Simultaneous Instrument Per Channel (if enabled):</h3>
+                        <ul>
+                            <li><b>Alt Enter</b>: add instrument within channel</li>
+                            <li><b>Alt Backspace</b> delete instrument within channel</li>
+                            <li><b>Shift 0-9</b> select/toggle corresponding instrument within channel</li>
+                        </ul>
+                        <h3>Song Player:</h3>
+                        <ul>
+                            <li><b>Spacebar</b>: play or pause the song</li>
+                            <li><b>[ ]</b>: move playhead backward or forward one bar</li>
+                            <li><b>F</b>: move to first pattern</li>
+                            <li><b>L</b>: toggle loop</li>
+                            <li><b>Z/+/-</b>: toggle zoom</li>
+                            <li><b>Shift E/P</b>: return to editor</li>
+                            <li><b>Shift U</b>: shorten song player link</li>
+                        </ul>
+                        <h3>Miscellaneous</h3>
+                        <ul>
+                            <li><b>Shift ~</b>: new blank song</li>
+                            <li><b>Shift + U</b>: shorten song URL</li>
+                            <li><b>Alt + Enter</b>: add an instrument within the current channel</li>
+                            <li><b>Alt + Backspace</b>: delete the selected instrument within the current channel</li>
+                            <li><b>Alt + R</b>: generate a random instrument while preserving the current type</li>
+                            <li><b>Ctrl/Cmd + Alt + Shift + T</b>: open the custom theme editor</li>
+                            <li><b>Ctrl/Cmd + Shift + S</b>: share the current song URL</li>
+                            <li><b>Ctrl/Cmd + Shift + B</b>: open beat settings</li>
+                            <li><b>Ctrl/Cmd + Shift + N</b>: start a new blank song</li>
+                            <li><b>Ctrl/Cmd + Alt + I</b>: copy an HTML embed code</li>
+                            <li><b>Ctrl/Cmd + Shift + L</b>: open layout settings</li>
+                            <li><b>Shift + Click</b>: multi-select notes or patterns for faster editing</li>
+                            <li><b>Shift + E or Shift + P</b>: return to the editor from the player</li>
+                        </ul>
+                    <!--
+                    <p>For the complete list of keybinds, check the <a onclick="window.open('https://beepbox.miraheze.org/wiki/Keybinds')">BeepBox Wiki</a> for more info.</p>
+                    -->
+                    </details>
+                    <details>
+                        <summary>Preset Tags List:</summary>
+                        <p>Note that all tags have no spaces and are case insensitive</p>
+                        <h3>BeepBox Category Tags:</h3>
+                        <ul>
+                            Retro, Keys, Idiophone, Guitar, Picked, Distortion, String, Vocal, Brass, Reed, Flute, Pad, 
+                            Drums (all drum types), HiHat, Snare, Kick, Novelty
+                        </ul>
+                        <h3>Special Category Tags:</h3>
+                        <ul>
+                            <b>Featured:</b> The top 5-10% of instruments picked out by CoolTasDude<br>
+                            <b>Bass:</b> Instruments that work best at low pitches<br>
+                            <b>Lead:</b> Instruments that work best at high pitches<br>
+                            <b>Ambience:</b> Ambient background sounds, like wind <br>
+                            <b>Chiptune:</b> Chipwaves with minimal effects<br>
+                            <b>Dubstep:</b> wub wub bwwooooOOOOWWWWWwwww<br>
+                            <b>SFX:</b> Instruments that resemble specific sound effects. 
+                            <b></b>
+                        </ul>
+                        <h3>Instrument Type Tags:</h3>
+                        <ul>
+                            Chip (any), ChipWave, CustomChip,
+                            FM (any), FM4op, FM6op,
+                            Supersaw, PWM (pulse width), PickedString, Harmonics, Spectrum, Noise, Drumset
+                        </ul>
+                        <h3>BeepMod Tags:</h3>
+                        <p>These tags only exist for BeepMods with 10 or more presets</p>
+                        <ul>
+                            BeepBox, JummBox, UltraBox, SlarmoosBox, AbyssBox, SandBox, MidBox, AwesomeBox, BulbBox, Unbox, JukeBox, 41Box
+                        </ul>
+                        <h3>TitanBox Version Tags:</h3>
+                        <ul>
+                            pre1.0.0, 1.0.0, 1.0.1, 1.0.2
+                        </ul>
+                        <h3>Community Tags:</h3>
+                        <p>These tags are for users with 10 or more non-novelty presets:</p>
+                        <ul>
+                            CoolTasDude, DX7FM, HoneyKitKD, Calamity, ThatBeepboxGuy, truemori, TheTuneCrusher, Bagel, ia.kisha, snowirei, Krmailence, 
+                            DamageLoL, spendog, SomethingOriginal, eggfry, august, Treethletress, Synthetic, SuP3R, RBLX_INST, Jayden256, kawkawguy, ex1,
+                            Ashiiware, Jacobar475, Formskooooo, dragoncoder047, UBF33, Luxian, PiglinMiguel, MaliciousMandwald, Yupekosi, Xelerate_XD
+                        </ul>
+                        
+
+                    </details>
+                    
+                    <details>
+                        <summary>FAQ:</summary>
+                            <details>
+                                <summary>Why are the tags not working?</summary>
+                                    <p>
+                                        Currently, instrument tags only effect the R (random preset) and T (next preset) keybinds. Tags have no effect on the instrument type dropdown.
+                                    </p>
+                                    <p>
+                                        Messing with how the instrument type dropdown functions is a pain. Don't expect this to change any time soon.
+                                    </p>
+                            </details>
+                    </details>
+                </section>
+    <ul></ul>
+    </div>
+            <nav class="project-links" aria-label="Project links">
+                <a class="project-link" href="https://github.com/INotLettuce/TitanBox/tree/a95328f32338be7233fc9d4a9678acd1db56db12" target="_blank" rel="noopener noreferrer">
+                    <img src="./image_assets/github.png" alt="" />
+                    <span>TitanBox Source Code</span>
+                </a>
+                <a class="project-link" href="https://beepbox-launchpad.github.io" target="_blank" rel="noopener noreferrer">
+                    <img src="./image_assets/launchpad.png" alt="" />
+                    <span>BeepBox Launchpad</span>
+                </a>
+            </nav>
+            <p class="project-credit">Launchpad made by Slarmoo, Choptop84, and HappyLemonLime</p>
+        </div>
+    </div>
+
+    <!--
+    Instead of loading js beepbox editor interface directly, test for browser support.
+    <script type="text/javascript" src="beepbox_editor.min.js"></script>
+    -->
+    <script type="text/javascript">
+
+        // Randomize display of header
+        
+        const plants = [
+        /*
+
+        // jummbox/goldbox plants    
+        "🍂", "🌿", "🌺", "🍃", "🍄", "🍀🌷", "🌈🍂🍁🍀🌷🍄🐲🌈🍃🌺🍄", " 1️⃣3️⃣1️⃣2️⃣",
+        //blubox plants
+        "≽(◕ ᴗ ◕)≼", "≽(ᴗ _ ᴗ)≼", "≽(⌐ _ ⌐)≼", "≽(ᵕ ‿ ᵕ)≼", 
+        // familiarbox plant (there were others, but the code of familiarbox is long gone)
+        // this is actually a reference to really old lore chippy made for one of their projects 
+        "☀️⭐🕒👁️",
+        // suggested by mel, meant to supplement the lack of a worm logo
+        // (in case it doesn't show up, this is meant to be a worm emoji)
+        "🪱",
+        // I believe this is from paandorasbox (might have also been present in familiarbox???? maybe not though...)
+        //slarmoo - changed to not wackybox, because it isn't :p
+        "not :wackybox:",
+        // plant originally suggested by mel in reference to the "(don't) eat thegubbys" meme        
+        "🐟",
+        // blubox desktop plants 
+        "⚡","🔵","💫",
+        // LemmBox 
+		"🍋",
+        // Slarmoo's Box plants
+        "✨","🌈","🌧️","🪨","🐍","🌲","🌳","𓆏","🦀","🍄‍🟫","🌵","and Bobby","🥚",
+        
+        */
+
+        //Current version
+        "1.0.2",
+        //JukeBox
+        "(did someone say presets?)", //0.2.1
+        "car go brrrr", "q", /**"and not ShoeBox", **/ "I eat paper", "Made on a school chromebook", //0.2.2
+        "[insert Weezer riff]", "at least 1 instrument", "I like turtles", "boopbox", "Im feeling lucky", //0.2.3
+        "NOW IN 2.5D!!!", "(*^*)", "I put a weezer riff somewhere", "Im not felling lucky :(", "extra calsium!", "implodes" //1.0.0
+        ];
+        const date = new Date();
+        if (Math.floor(Math.random() * 0) == 0) { // plants always show up now
+            document.getElementById("goldboxPlant").innerHTML = "  " + plants[(Math.floor(Math.random() * plants.length))];
+
+            /*
+
+            //Slarmoo's Box holiday plants
+            const winterPlants = ["🎄", "🍪", "☃️", "🎁", "❄️"];
+            if ((date.getDate() >= 22 && date.getDate() <= 26) && date.getMonth() == 11) {
+                document.getElementById("goldboxPlant").innerHTML = "  " + winterPlants[(Math.floor(Math.random() * winterPlants.length))];
+            }
+            //Slarmoo's Box Halloween plants
+            const spookyPlants = ["🎃", "🍬", "👻", "🐍", "🧪"];
+            if ((date.getDate() == 31) && date.getMonth() == 9) {
+                document.getElementById("goldboxPlant").innerHTML = "  " + spookyPlants[(Math.floor(Math.random() * spookyPlants.length))];
+            }
+            //Slarmoo's Box valentines plants
+            const heartPlants = ["❤️", "🧡", "💛", "💚", "💙", "💜"];
+            if ((date.getDate() >= 13 && date.getDate() <= 15) && date.getMonth() == 1) {
+                document.getElementById("goldboxPlant").innerHTML = "  " + heartPlants[(Math.floor(Math.random() * heartPlants.length))];
+            }
+            //Slarmoo's Box pi day plants
+            if ((date.getDate() == 14) && date.getMonth() == 2) {
+                const piePlants = ["π", "🥧", "🍏", "🍋", "3.14"];
+                document.getElementById("goldboxPlant").innerHTML = "  " + piePlants[(Math.floor(Math.random() * piePlants.length))];
+            }
+
+            */
+        }
+        /*
+        if ((date.getDate() == 1) && date.getMonth() == 3) {
+            const foolishPlants = ["Censorship Update", "19.8.4", "👁️", "🐍", "🚫"];
+            document.getElementById("goldboxPlant").innerHTML = "  " + foolishPlants[(Math.floor(Math.random() * foolishPlants.length))];
+        }
+        */
+        if ((date.getDate() == 21) && date.getMonth() == 7) { // updated to JukeBox
+            const years = date.getFullYear() - 2025;
+            const birthdayPlants = [years + " year" + (years != 1 ? "s" : "") + "!", /* "🎂", "🎉", "Happy Birthday!", */ "Anniversary"];
+            document.getElementById("goldboxPlant").innerHTML = "  " + birthdayPlants[(Math.floor(Math.random() * birthdayPlants.length))];
+        }
+
+        if(Math.random() * 10000 < 1) {
+            document.getElementById("goldboxPlant").addEventListener("click", function (event) {
+                window.open("./macandcheese.html", "_blank");
+            })
+            const a = document.createElement("a");
+            document.getElementById("goldboxPlant").innerHTML = " macaroni and cheese";
+            document.getElementById("goldboxPlant").style.color = "#bb8822";
+        }
+
+        /*
+        if(document.getElementById("goldboxPlant").innerText.includes("🐲")) {
+            document.getElementById("goldboxPlant").addEventListener("mouseover", function (event) {
+                document.getElementById("goldboxPlant").innerText = " 🌈🍂🍁🍀🌷🍄🐍🌈🍃🌺🍄";
+            }, { once: true })
+        } 
+        */
+
+        function browserHasRequiredFeatures() {
+            "use strict";
+            if (window.AudioContext == undefined && window.webkitAudioContext == undefined) {
+                return false;
+            }
+
+            try {
+                eval("class T {}");
+                eval("const a = () => 0");
+                eval("for (const a of []);");
+            } catch (error) {
+                return false;
+            }
+
+            return true;
+        }
+
+        if (browserHasRequiredFeatures()) {
+            // Go ahead and load js beepbox editor interface:
+            var fileref = document.createElement("script");
+            fileref.setAttribute("type", "text/javascript");
+            fileref.setAttribute("src", "beepbox_editor.min.js");
+            
+            /* april fools version
+            if ((date.getDate() == 1) && date.getMonth() == 3) {
+                fileref.setAttribute("src", "foolish_editor.min.js");
+            } else {
+                fileref.setAttribute("src", "beepbox_editor.min.js");
+            }
+            */
+            document.head.appendChild(fileref);
+        } else {
+            document.getElementById("beepboxEditorContainer").innerHTML = "Sorry, TitanBox doesn't support your browser. Try a recent version of Chrome, Firefox, Edge, Safari, or Opera.";
+        }
+
+		// If the page was loaded with an old song version that old versions of BeepBox support,
+		// update the links to the old versions so that they'll open the song.
+	    //HEY, ULTRABOX DOESN'T HAVE THESE, WHAT DO WE DO????
+		if (/^#[1-6]/.test(location.hash)) {
+			document.getElementById("linkTo2_3").href += location.hash;
+		}
+		if (/^#[1-8]/.test(location.hash)) {
+			document.getElementById("linkTo3_0").href += location.hash;
+		}
+    </script>
+</body>
+</html>

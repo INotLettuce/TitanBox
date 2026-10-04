@@ -1,0 +1,15 @@
+{
+	"name": "TitanBox",
+	"short_name": "TitanBox",
+	"description": "TitanBox is a BeepBox-family music editor with expanded synthesis and composition features.",
+	"scope": "./",
+	"start_url": "./",
+	"display": "browser",
+	"orientation": "portrait-primary",
+	"theme_color": "#16191c",
+	"background_color": "#16191c",
+	"categories": ["music"],
+	"icons": [
+		{ "src": "titanbox-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
+	]
+}
